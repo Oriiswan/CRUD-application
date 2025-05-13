@@ -1,0 +1,37 @@
+{% extends "layout/base.html" %}
+
+{% block 'title' %}Add Gender Title{% endblock 'title' %}
+{% block 'nav' %}Add Gender{% endblock 'nav' %}
+{% block 'content' %}
+
+{% include "includes/sidebar.html" %}
+
+<div class='flex w-full mt-30 justify-center items-center'>
+  <form class='w-130  h-75  rounded-xl shadow-lg p-7 relative ' action="/gender/editGender/{{gender.gender_id}}" method='POST'>
+    {% csrf_token %}
+    <a href="/gender/list" class='text-blue-500 text-[19px] dark:hover:text-blue-800 '>
+      - Back to Gender List 
+    </a>
+    <h2 class='text-3xl font-medium my-5'>Edit Gender</h2>
+  <label for="gender" class='font-medium'>Gender ID {{gender.gender_id}} <span class="text-red-500">*</span></label>
+  <input list='languages' class='border-1 p-[20px] w-full mt-2 border-gray-400 rounded-md block h-[30px]' placeholder = {{gender.gender}} type="text" name='gender' >
+  <datalist id='languages'>
+    <option value="Male"></option>
+    <option value="Female"></option>
+    <option value="Non-binary"></option>
+  </datalist>
+
+  <div class='flex justify-end gap-3'>
+     
+            <a href='/gender/list' class=' shadow-sm p-1 px-5 rounded-xsm mt-8 font-medium dark:hover:text-gray-500 cursor-pointer'>Back</a>
+     
+     <button type='submit' value='submit' class='bg-green-500 text-white p-1 px-5 rounded-md mt-8  font-bold dark:hover:bg-green-400 cursor-pointer'>Save changes</button>
+
+  </div>
+  
+   
+ 
+</form>
+</div>
+
+{% endblock 'content' %}  
