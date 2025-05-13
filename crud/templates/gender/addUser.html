@@ -1,0 +1,124 @@
+{% extends "layout/base.html" %}
+
+{% block 'title' %}Add Gender Title{% endblock 'title' %}
+{% block 'nav' %}Add User{% endblock 'nav' %}
+{% block 'content' %}
+
+{% include "includes/sidebar.html" %}
+
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+      <!-- Navbar -->
+     
+
+      <!-- Add User Form -->
+      <main class="flex-1 overflow-y-auto p-6 bg-gray-100">
+        <div class="max-w-3xl mx-auto">
+          <!-- Back Button -->
+          <a href="#" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4">
+            <i class="fas fa-arrow-left mr-2"></i> Back to User List
+          </a>
+          
+          <!-- Form Card -->
+          <div class="bg-white rounded-lg shadow overflow-hidden p-6">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-6">Create New User</h3>
+            
+            <form>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Column -->
+                <div>
+                  <!-- Username -->
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="fullname">
+                      Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      id="fullname" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Michael Buensalido"
+                      required
+                    >
+                  </div>
+                  
+                  <!-- Email -->
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="contact">
+                      Contact Number <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      id="contact" 
+                      type="contact" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="0987654321"
+                      required
+                    >
+                  </div>
+                  
+                  <!-- Password -->
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                      Username <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      id="username" 
+                      type="username" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                  </div>
+                </div>
+                
+                <!-- Right Column -->
+                <div>
+                  <!-- Full Name -->
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                      Email <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      id="email" 
+                      type="text" 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="johndoe@gmail.com"
+                      required
+                    >
+                  </div>
+                  
+                  
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="Birthdate">
+                      Birthdate <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name='Birthdate' class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  </div>
+                  
+                  
+                  <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                      Password <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id='password' name='password' class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Submit Button -->
+              <div class="mt-6 flex justify-end">
+                <button 
+                  type="submit" 
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-md transition duration-200 inline-flex items-center"
+                >
+                  <i class="fas fa-save mr-2"></i> Save User
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+
+{% endblock 'content' %}

@@ -1,0 +1,56 @@
+{%load static%}
+{% if messages %}
+<div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-2 w-80 bg-white">
+  {% for message in messages %}
+    <div class="toast toast-{{ message.tags }} flex items-center justify-between px-4 py-3 rounded-md shadow-lg">
+      <span>{{ message }}</span>
+      <button onclick="this.parentElement.remove()" class="ml-2">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/output.css ' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>{% block 'title' %}{% endblock 'title' %}</title>
+</head>
+<body class='pl-[295px] bg-gray-100'>
+  <header class="bg-white shadow-sm">
+        <div class="flex items-center justify-between px-6 py-3 h-24">
+          <div class="flex items-center">
+            <button class="text-gray-500 focus:outline-none lg:hidden">
+              <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="text-xl font-semibold text-gray-800 ml-4">{% block 'nav' %}{% endblock 'nav' %}</h2>
+          </div>
+          <div class="flex items-center">
+            <div class="relative">
+              <button class="text-gray-500 focus:outline-none">
+                <i class="fas fa-bell"></i>
+              </button>
+            </div>
+            <div class="ml-4 relative">
+              <button class="flex items-center focus:outline-none">
+                <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/men/1.jpg" alt="User">
+                <span class="ml-2 text-gray-700">Admin</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+  {% block 'content' %}{% endblock 'content' %}
+  <script>
+  setTimeout(() => {
+    document.querySelectorAll('.toast').forEach(el => el.remove());
+  }, 3000); // Hide after 3 seconds
+</script>
+
+</body>
+</html>
