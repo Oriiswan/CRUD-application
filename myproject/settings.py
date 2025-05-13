@@ -76,9 +76,9 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'NAME': 'buensalido_db',
-        'PORT': '3306',
+        'HOST': '127.0.0.2',
+        'NAME': 'groupfifteendj_db',
+        'PORT': '3308',
         'USER': 'root',
         'PASSWORD': '',
         'OPTIONS': {

@@ -5,6 +5,10 @@ urlpatterns = [
     path('gender/add', views.addGender),
     path('gender/list', views.genderList),
     path('gender/addUser', views.addUser),
+<<<<<<< Updated upstream
     path('gender/editGender/<int:genderId>', views.editGender),
     path('gender/deleteGender/<int:genderId>', views.deleteGender)
+=======
+	path('user/list', views.userList)
+>>>>>>> Stashed changes
 ]

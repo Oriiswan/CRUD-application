@@ -1,0 +1,36 @@
+{% extends "layout/base.html" %}
+
+{% block 'title' %}User List{% endblock 'title' %}
+{% block 'nav' %}User list{% endblock 'nav' %}
+{% block 'content' %}
+
+{% include "includes/sidebar.html" %}
+
+
+
+<div class='p-2 sm:ml-64 mt-16 md:mt-14'>
+	{% comment %} {% include "include/ToastMessage.html" %} {% endcomment %}
+	<div class="relative overflow-x-auto rounded-t-xl shadow-xl">
+		<table class="w-full">
+			<thead class="text-xs text-left text-white bg-blue-600 ">
+				<tr>
+					<th class="px-6 py-3">Gender</th>
+					<th class="px-6 py-3">Action</th>
+				</tr>
+			</thead>
+			<tbody class ="text-xs text-black">
+				{% for user in users  %}
+				
+					<tr class='hover:bg-gray-200 border-b border-gray-200'>
+						<td class='px-6 py-3'>{{ user.full_name }} </td>
+						<td class='px-6 py-3'></td>
+					</tr>
+
+				{% endfor %}
+
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock 'content' %}

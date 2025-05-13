@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Genders
+from .models import Genders, Users
 from django.contrib import messages
 # Create your views here.
 
@@ -29,11 +29,12 @@ def genderList(request):
   except Exception as e:
     return HttpResponse(f'Eroor occured during load genders: {e}')
     
-  
+
  
 def addUser(request):
   return render(request,'gender/addUser.html')
 
+<<<<<<< Updated upstream
 
 def editGender(request, genderId):
   try:
@@ -88,3 +89,14 @@ def deleteGender(request, genderId):
       return render(request, 'gender/deleteGender.html', data)
   except Exception as e:
     return HttpResponse(f'Error has been Occurred: {e}')
+=======
+def userList(request):
+  try:
+    user = Users.objects.all()
+    data = {
+      'users': user
+    }
+    return render(request, 'user/userList.html', data)
+  except Exception as e:
+    return HttpResponse(f'Error occured during load users: {e}')
+>>>>>>> Stashed changes
