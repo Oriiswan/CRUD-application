@@ -32,7 +32,7 @@ def genderList(request):
   
  
 def addUser(request):
-  return render(request,'gender/addUser.html')
+  return render(request,'user/addUser.html')
 
 
 def editGender(request, genderId):
@@ -88,3 +88,6 @@ def deleteGender(request, genderId):
       return render(request, 'gender/deleteGender.html', data)
   except Exception as e:
     return HttpResponse(f'Error has been Occurred: {e}')
+  
+def userList(request):
+  return render(request, 'user/userList.html')
