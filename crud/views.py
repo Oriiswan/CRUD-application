@@ -107,7 +107,7 @@ def user_list(request):
 
 
 		data = {
-         'users': userObj,
+         'users': users,
          'password': currentPassword,
          'username': currentUsername
            
