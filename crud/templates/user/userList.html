@@ -7,8 +7,8 @@
 {% include "includes/sidebar.html" %}
 
 
-<div class="relative overflow-x-auto w-full px-4 md:px-0 flex justify-center mt-10"> 
-    <div class="w-[98em] max-w-[98em]">
+<div class="relative overflow-x-auto w-full px-6  flex justify-center mt-10"> 
+    <div class="w-[98em]  max-w-[98em]">
       <div class='flex flex-col md:flex-row justify-between my-7 gap-4'>
         <h2 class='text-2xl md:text-3xl font-medium'>All Users</h2>
         <a href="/user/addUser" class="w-full md:w-auto"> 
@@ -40,45 +40,53 @@
                         Email
                     </th>
                     <th scope="col" class="px-6 py-3">
+                        Username
+                    </th>
+                    <th scope="col" class="px-6 py-3">
                         <span class="sr-only">Edit</span>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="bg-white border-b   border-gray-200 hover:bg-gray-100 hover:text-white">
+                {% for user in users %}
+                <tr class="bg-white border-b   border-gray-200 hover:bg-gray-100 ">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap   ">
-                        Name
+                        {{ user.full_name }}
                     </th>
                     <td class="px-6 py-4">
-                        Male
+                        {{ user.gender.gender }}
                     </td>
                     <td class="px-6 py-4">
-                            January 15
+                        {{ user.birth_date}}
                     </td>
                     <td class="px-6 py-4">
-                        Brgy Cagay
+                        {{ user.address}}
                     </td>
                     <td class="px-6 py-4">
-                        0987654321
+                        {{ user.contact_number}}
                     </td>
                     <td class="px-6 py-4">
-                        Michaelbuensalido15@gmail.com
+                        {{ user.email}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ user.username}}
                     </td>
                     <td class="px-4 py-4 md:px-6 md:py-4 text-sm md:text-[15px] flex items-end justify-end gap-2">
                         <div>
-                            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
+                            <a href="/users/edit/{{user.user_id}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
                                 <i class="fas fa-edit mr-1"></i> <span class="hidden sm:inline">Edit</span>
                               </a>
                         </div>
                         
                         <div>
-                            <a href="#" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
+                            <a href="/users/delete/{{user.user_id}}" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
                                 <i class="fas fa-trash-alt mr-1"></i> <span class="hidden sm:inline">Delete</span>
                             </a>
                         </div>
                         
                     </td>
                 </tr>
+                {% endfor %}
                 
             </tbody>
         </table>

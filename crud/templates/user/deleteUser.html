@@ -1,0 +1,87 @@
+{% extends "layout/base.html" %}
+
+{% block 'title' %} Delete User {% endblock 'title' %}
+
+{% block 'content' %}
+{% include "includes/sidebar.html" %}
+
+<div class="p-2 sm:ml-64 mt-16 md:mt-14">
+	<div class="max-w-2xl mx-auto mt-10 bg-white rounded-lg shadow-md overflow-hidden">
+		<!-- Header -->
+		<div class="bg-blue-600 py-4 px-6">
+			<h1 class="text-2xl font-bold text-white">Delete Existing User</h1>
+		</div>
+		
+		<!-- Form -->
+		<form action="/users/delete/{{ user.user_id}}" method='post' class="p-6 space-y-6">
+			{% csrf_token %}
+			<!-- Full Name -->
+			<div>
+				<label for="full_name" class="block text-sm font-medium text-gray-700">Full Name*</label>
+				<input type="text" id="full_name" name="full_name"  value='{{user.full_name}}'
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+			</div>
+			
+			<!-- Gender -->
+			<div>
+				<label for="gender" class="block text-sm font-medium text-gray-700">Gender*</label>
+				<select id="gender" name="gender"  
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+					<option value='{{user.gender.gender}}'>{{user.gender.gender}}</option>
+					{% for gender in genders  %}
+						<option value="{{ gender.gender_id}}">{{gender.gender}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			
+			<!-- Birth Date -->
+			<div>
+				<label for="birth_date" class="block text-sm font-medium text-gray-700">Birth Date*</label>
+				<input type="date" id="birth_date" name="birth_date"  value='{{user.birth_date|date:"Y-m-d"}}'
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+			</div>
+			
+			<!-- Address -->
+			<div>
+				<label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+				<input type="text" id="address" name="address"  value='{{user.address}}'
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+			</div>
+			
+			<!-- Contact Number -->
+			<div>
+				<label for="contact_number" class="block text-sm font-medium text-gray-700">Contact Number*</label>
+				<input type="tel" id="contact_number" name="contact_number"  value='{{user.contact_number}}'
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+			</div>
+			
+			<!-- Email -->
+			<div>
+				<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+				<input type="email" id="email" name="email" value='{{user.email}}'
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+			</div>
+			
+			<!-- Username -->
+			<div>
+				<label for="username" class="block text-sm font-medium text-gray-700">Username*</label>
+				<input type="text" id="username" name="username"  value='{{user.username}}'
+					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+			</div>
+			
+			
+			<!-- Form Actions -->
+			<div class="flex justify-end space-x-4 pt-4">
+				<button type="button" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+					Cancel
+				</button>
+				<button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+					Delete User
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+{% endblock 'content' %}
