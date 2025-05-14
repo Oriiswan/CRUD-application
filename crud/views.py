@@ -2,9 +2,15 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import Genders, Users
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login as auth_login
 
 # Create your views here.
+currentUsername = ''
+currentPassword = ''
+
 
 def gender_list(request):
 	try:
@@ -18,6 +24,7 @@ def gender_list(request):
 	except Exception as e:
 		return HttpResponse(f'Error occured during load genders: {e}')
 
+
 def add_gender(request):
 	try:
 		if request.method == 'POST':
@@ -30,7 +37,8 @@ def add_gender(request):
 			return render(request, 'gender/addGender.html')
 	except Exception as e:
 		return HttpResponse(f'Error occured during add gender: {e}')
-	
+
+
 def edit_gender(request, genderId):
 	try:
 		if request.method == 'POST':
@@ -59,6 +67,7 @@ def edit_gender(request, genderId):
 	except Exception as e:
 		return HttpResponse(f'Error occured during edit gender: {e}')
 
+
 def delete_gender(request, genderId):
 	try:
 		if request.method == 'POST':
@@ -81,17 +90,22 @@ def delete_gender(request, genderId):
 	except Exception as e:
 		return HttpResponse(f'Error occured during delete gender: {e}')
 
+
 def user_list(request):
 	try:
 		userObj = Users.objects.select_related('gender')
 
 		data = {
-			'users': userObj
+         'users': userObj,
+         'password': currentPassword,
+         'username': currentUsername
+           
 		}
 
 		return render(request, 'user/userList.html', data)
 	except Exception as e:
 		return HttpResponse(f'Error occured during load gender: {e}')
+
 
 def add_user(request):
 	try:
@@ -116,7 +130,7 @@ def add_user(request):
 				contact_number = contactNumber,
 				email = email,
 				username = username,
-				password = make_password(password)
+				password =make_password(password)
 			).save()
 
 			messages.success(request, 'User added successfully!')
@@ -132,6 +146,7 @@ def add_user(request):
 			return render(request, 'user/addUser.html', data)
 	except Exception as e:
 		return HttpResponse(f'Error occured during add user: {e}')
+
 
 def edit_user(request, userId):
 	try:
@@ -175,7 +190,8 @@ def edit_user(request, userId):
 		
 	except Exception as e:
 		return HttpResponse(f'Error occured during edit user: {e}')
-	
+
+
 def delete_user(request, userId):
 	try:
 		if request.method == 'POST':
@@ -199,26 +215,29 @@ def delete_user(request, userId):
 	
 	except Exception as e:
 		return HttpResponse(f'Error occured during delete gender: {e}')
-<<<<<<< HEAD
 
 
 def login(request):
-    return render(request,'user/login.html')
-=======
-	
-def user_profile(request, userId):
-	try:
-		userObj = Users.objects.get(pk=userId)
-		genderObj = Genders.objects.all()
+    global currentPassword
+    global currentUsername
+    try:
+        if request.method == 'POST':
+            users = Users.objects.all()
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            for i in users:
+                if username == i.username and check_password(password, i.password):
+                  currentUsername = username
+                  currentPassword = password
+                  return redirect('user_list')
+                
+            return render(request, 'user/login.html')    
+        else:
+            return render(request, 'user/login.html')
+                    
+    except Exception as e:
+        return HttpResponse(f'Error occured during login: {e}')
 
-		data = {
-			'user': userObj,
-			'genders': genderObj
-		}
-
-
-		return render(request, 'user/userProfile.html', data)
-	
-	except Exception as e:
-		return HttpResponse(f'Error occured during load profile: {e}')
->>>>>>> ff2d55e993facd80c5c0fa47dfef2bb1b2e230d6
+def logout_view(request):
+    logout(request)
+    return redirect('login')

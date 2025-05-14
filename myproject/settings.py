@@ -130,3 +130,10 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+LOGIN_URL = 'login'  # Where unauthenticated users are redirected
+LOGIN_REDIRECT_URL = '/users/list'  # Where users go after successful login
+LOGOUT_REDIRECT_URL = 'login'  # Where users go after logout
