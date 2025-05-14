@@ -99,7 +99,7 @@ def user_list(request):
 	try:
 		userObj = Users.objects.select_related('gender')
 
-		# pagination
+		# pagination``
 		p = Paginator(Users.objects.select_related('gender'), 10)
 		page = request.GET.get('page')
 		users = p.get_page(page)
@@ -109,7 +109,8 @@ def user_list(request):
 		data = {
          'users': users,
          'password': currentPassword,
-         'username': currentUsername
+         'username': currentUsername,
+         'user_count': user_count
            
 		}
 
@@ -298,3 +299,60 @@ def login(request):
 def logout(request):
     logout(request)
     return redirect('login')
+
+
+def profile_page(request):
+    global currentPassword
+    global currentUsername
+    try:
+        users = Users.objects.all()
+        for user in users:
+            if currentUsername == user.username and check_password(currentPassword, user.password):
+                
+                data = {
+					'user': user
+				}
+                
+                return render(request, 'user/profile.html', data)
+        return HttpResponse('hi') 
+    except Exception as e:
+        return HttpResponse(f'Error occured in profile page: {e}')    
+    
+
+def change_password(request):
+    if request.method == 'POST':
+        users = Users.objects.get(username = currentUsername)
+        currentpass = request.POST.get('currentpass')
+        newpass = request.POST.get('newpass')
+        confirmpass = request.POST.get('confirmpass')
+        
+        errors = []
+        
+        if not check_password(users.password, currentpass):
+            errors.append("Current password is incorrect")
+            
+        if newpass != confirmpass:
+            errors.append("New passwords don't match")
+            
+        if newpass == currentpass:
+            errors.append("New password must be different from current password")
+            
+        if len(newpass) < 8:
+            errors.append("Password must be at least 8 characters")
+
+        if not errors:
+            users.password = make_password(newpass)
+            users.save()
+            messages.success(request, 'Password updated successfully!')
+            return redirect('user_list')
+        else:
+            for error in errors:
+                messages.error(request, error)
+            
+        
+    else:
+        return render(request, 'user_list')
+                
+    return render(request, 'user/.html', {
+        'user': request.user
+    })
