@@ -116,7 +116,29 @@ def add_user(request):
 			password = request.POST.get('password')
 			confirmPassword = request.POST.get('confirm_password')
 
-			# if password != confirmPassword:
+			form_data = {
+				'fullName': request.POST.get('full_name'),
+				'gender': request.POST.get('gender'),
+				'birthDate': request.POST.get('birth_date'),
+				'address': request.POST.get('address'),
+				'contactNumber': request.POST.get('contact_number'),
+				'email': request.POST.get('email'),
+				'username': request.POST.get('username'),
+			}
+
+			genderObj = Genders.objects.all()
+
+			# if username already in db:
+
+			if Users.objects.filter(username=username).exists():
+
+				data = {
+					'genders': genderObj,
+					'form_data': form_data,
+					'username_error': True
+				}
+
+				return render(request, 'user/addUser.html', data)
 
 			Users.objects.create(
 				full_name = fullName,
@@ -157,6 +179,29 @@ def edit_user(request, userId):
 			email = request.POST.get('email')
 			username = request.POST.get('username')
 
+			form_data = {
+				'fullName': request.POST.get('full_name'),
+				'gender': request.POST.get('gender'),
+				'birthDate': request.POST.get('birth_date'),
+				'address': request.POST.get('address'),
+				'contactNumber': request.POST.get('contact_number'),
+				'email': request.POST.get('email'),
+				'username': request.POST.get('username'),
+			}
+
+			new_username = request.POST.get('username').strip()
+        
+			# Only check if username was changed
+			if new_username != userObj.username:
+				if Users.objects.filter(username__iexact=new_username).exists():
+					return render(request, 'user/editUser.html', {
+						'user': userObj,
+						'form_data': form_data,
+						'username_error': True
+					})
+			
+			# Update user if validation passes
+			userObj.username = new_username
 			userObj.full_name = fullName
 			userObj.gender = Genders.objects.get(pk=gender)
 			userObj.birth_date = birthDate
@@ -165,6 +210,7 @@ def edit_user(request, userId):
 			userObj.email = email
 			userObj.username = username
 			userObj.save()
+
 
 			messages.success(request, 'Gender updated successfully!')
 			# gabalik sa iban nga link
