@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from .models import Genders, Users
 from django.contrib.auth.hashers import make_password
+from django.core.paginator import Paginator
 
 # Create your views here.
 
@@ -85,8 +86,17 @@ def user_list(request):
 	try:
 		userObj = Users.objects.select_related('gender')
 
+		# pagination
+		p = Paginator(Users.objects.select_related('gender'), 10)
+		page = request.GET.get('page')
+		users = p.get_page(page)
+		user_count = Users.objects.count()
+
+
 		data = {
-			'users': userObj
+			'users_list': userObj,
+			'users': users,
+			'user_count': user_count
 		}
 
 		return render(request, 'user/userList.html', data)
@@ -199,26 +209,7 @@ def delete_user(request, userId):
 	
 	except Exception as e:
 		return HttpResponse(f'Error occured during delete gender: {e}')
-<<<<<<< HEAD
 
 
 def login(request):
     return render(request,'user/login.html')
-=======
-	
-def user_profile(request, userId):
-	try:
-		userObj = Users.objects.get(pk=userId)
-		genderObj = Genders.objects.all()
-
-		data = {
-			'user': userObj,
-			'genders': genderObj
-		}
-
-
-		return render(request, 'user/userProfile.html', data)
-	
-	except Exception as e:
-		return HttpResponse(f'Error occured during load profile: {e}')
->>>>>>> ff2d55e993facd80c5c0fa47dfef2bb1b2e230d6
