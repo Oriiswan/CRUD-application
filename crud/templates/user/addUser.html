@@ -18,14 +18,14 @@
 			<!-- Full Name -->
 			<div>
 				<label for="full_name" class="block text-sm font-medium text-gray-700">Full Name*</label>
-				<input type="text" id="full_name" name="full_name" required
+				<input type="text" id="full_name" name="full_name" value="{{ form_data.fullName|default:'' }}" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 			</div>
 			
 			<!-- Gender -->
 			<div>
 				<label for="gender" class="block text-sm font-medium text-gray-700">Gender*</label>
-				<select id="gender" name="gender" required
+				<select id="gender" name="gender" value="{{ form_data.gender|default:'' }}" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 					<option value="">Select Gender</option>
 					{% for gender in genders  %}
@@ -37,36 +37,39 @@
 			<!-- Birth Date -->
 			<div>
 				<label for="birth_date" class="block text-sm font-medium text-gray-700">Birth Date*</label>
-				<input type="date" id="birth_date" name="birth_date" required
+				<input type="date" id="birth_date" name="birth_date" value="{{ form_data.birthDate|default:'' }}" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 			</div>
 			
 			<!-- Address -->
 			<div>
-				<label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-				<textarea id="address" name="address" rows="3"
+				<label for="address" class="block text-sm font-medium text-gray-700">Address*</label>
+				<input type="text" id="address" name="address" rows="3" value="{{ form_data.address|default:'' }}" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
 			</div>
 			
 			<!-- Contact Number -->
 			<div>
 				<label for="contact_number" class="block text-sm font-medium text-gray-700">Contact Number*</label>
-				<input type="tel" id="contact_number" name="contact_number" required
+				<input type="tel" id="contact_number" name="contact_number" value="{{ form_data.contactNumber|default:'' }}" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 			</div>
 			
 			<!-- Email -->
 			<div>
 				<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-				<input type="email" id="email" name="email"
+				<input type="email" id="email" name="email" value="{{ form_data.email|default:'' }}"
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 			</div>
 			
 			<!-- Username -->
 			<div>
 				<label for="username" class="block text-sm font-medium text-gray-700">Username*</label>
-				<input type="text" id="username" name="username" required
+				<input type="text" id="username" name="username" value="{{request.POST.username}}" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+				{% if username_error  %}
+					<div class="mt-1 text-sm text-red-600">Username already exists!</div>
+				{% endif %}
 			</div>
 			
 			<!-- Password -->
@@ -75,12 +78,15 @@
 				<input type="password" id="password" name="password" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 			</div>
-			
-			<!-- Confirm Password -->
-			<div>
+
+				<!-- Confirm Password -->
+			<div class="mt-4">
 				<label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password*</label>
 				<input type="password" id="confirm_password" name="confirm_password" required
 					class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+				<div id="passwordError" class="hidden mt-1 text-sm text-red-600">
+					Passwords do not match!
+			</div>
 			</div>
 			
 			<!-- Form Actions -->
@@ -98,5 +104,36 @@
 	</div>
 </div>
 
+<script>	
+document.querySelector('form').addEventListener('submit', function(e) {
+	// password things
+	const password = document.getElementById('password');
+	const confirmPassword = document.getElementById('confirm_password');
+	const errorElement = document.getElementById('passwordError');
+	
+	// Clear previous error states
+	password.classList.remove('border-red-500');
+	confirmPassword.classList.remove('border-red-500');
+	
+	if (password.value !== confirmPassword.value) {
+		e.preventDefault(); // Stop form submission
+		
+		// Show error
+		errorElement.classList.remove('hidden');
+		
+		// Add red border to fields
+		password.classList.add('border-red-500');
+		confirmPassword.classList.add('border-red-500');
+		
+		// Clear fields
+		password.value = '';
+		confirmPassword.value = '';
+		
+		// Focus back to password field
+		password.focus();
+	}
+});
+
+</script>
 
 {% endblock 'content' %}
