@@ -300,3 +300,13 @@ def login(request):
 def logout(request):
     logout(request)
     return redirect('login')
+
+def search_users(request):
+    if request.method == "POST":
+        searched = request.POST.get('searched', '')
+        users = Users.objects.filter(full_name__icontains=searched)
+
+        return render(request, 'user/searchUser.html', {'searched': searched, 'users': users})
+    else:
+        
+        return render(request, 'user/searchUser.html', {'searched': '', 'users': []})

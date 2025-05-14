@@ -16,5 +16,8 @@ urlpatterns = [
     path('users/list', views.user_list, name='user_list'),
     path('users/edit/<int:userId>', views.edit_user, name='edit_user'),
     path('users/delete/<int:userId>', views.delete_user, name='delete_user'),
+	
+    # search URLs
+    path('users/search_users.html', views.search_users, name='search-users'),
 
 ]
