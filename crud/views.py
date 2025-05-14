@@ -211,3 +211,7 @@ def delete_user(request, userId):
 	
 	except Exception as e:
 		return HttpResponse(f'Error occured during delete gender: {e}')
+
+
+def login(request):
+    return render(request,'user/login.html')
