@@ -1,110 +1,98 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Genders, Users
 from django.contrib import messages
+from .models import Genders, Users
 from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 
+def gender_list(request):
+	try:
+		genders = Genders.objects.all()
 
-def addGender(request):
-  try:
-    if request.method == 'POST':
-      gender = request.POST.get('gender')
-      
-      Genders.objects.create(gender = gender).save()
-      messages.success(request, 'Gender added successfully')
-      return redirect('/gender/list')
-    else:
-       return render(request, 'gender/addGender.html')
-  except Exception as e:
-    return HttpResponse('Error has been occured')
- 
- 
-def genderList(request):
-  try:
-    gender = Genders.objects.all() # SELECT * FROM tbl_genders
-    data = {
-      'genders': gender
-    }
-    return render(request, 'gender/genderList.html', data)
-  except Exception as e:
-    return HttpResponse(f'Eroor occured during load genders: {e}')
-    
-  
- 
-def addUser(request):
-  return render(request,'user/addUser.html')
+		data = {
+			'genders':genders
+		}
+
+		return render(request, 'gender/genderList.html', data)
+	except Exception as e:
+		return HttpResponse(f'Error occured during load genders: {e}')
+
+def add_gender(request):
+	try:
+		if request.method == 'POST':
+			gender = request.POST.get('gender')
+
+			Genders.objects.create(gender=gender).save()
+			messages.success(request, 'Gender added successfully!')
+			return redirect('/genders/list')
+		else:
+			return render(request, 'gender/addGender.html')
+	except Exception as e:
+		return HttpResponse(f'Error occured during add gender: {e}')
+	
+def edit_gender(request, genderId):
+	try:
+		if request.method == 'POST':
+			genderObj = Genders.objects.get(pk=genderId)
+
+			# name of input is 'gender'
+			gender = request.POST.get('gender')
+
+			genderObj.gender = gender
+			genderObj.save()
+
+			messages.success(request, 'Gender updated successfully!')
+			# gabalik sa iban nga link
+			return redirect('/genders/list')
+
+		else:
+			genderObj = Genders.objects.get(pk=genderId)
+
+			data = {
+				'gender': genderObj
+			}
 
 
-def editGender(request, genderId):
-  try:
-    if request.method == 'POST':
-      genderObj = Genders.objects.get(pk = genderId)
-      gender = request.POST.get('gender')
-      
-      genderObj.gender = gender
-      genderObj.save()
-      messages.success(request, 'Edit gender successfully')
-      
-      data = {
-        'gender': genderObj
-      }
-      
-      return render(request, 'gender/editGender.html', data)
-      
-    else:
-      genderObj = Genders.objects.get(pk = genderId)
-      
-      data = {
-        'gender': genderObj
-      }
-      
-      return render(request, 'gender/editGender.html', data)
-  except Exception as e:
-   return HttpResponse(f'Error has been occurred: {e}') 
- 
-def deleteGender(request, genderId):
-  try:
-    if request.method == 'POST':
-      genderObj = Genders.objects.get(pk =genderId)
-      
-      genderObj.delete()
-      genderObj.save
-      messages.success(request, 'Record has been deleted')
-      
-      
-      data = {
-        'gender' : genderObj
-      }
-      
-      return render(request, 'gender/deleteGender.html', data)
-    else:
-      genderObj = Genders.objects.get(pk =genderId)
-      
-      
-      data = {
-        'gender' : genderObj
-      }
-      
-      return render(request, 'gender/deleteGender.html', data)
-  except Exception as e:
-    return HttpResponse(f'Error has been Occurred: {e}')
-  
-def userList(request):
-  # return render(request, 'user/userList.html')
-  try:
-    userObj = Users.objects.select_related('gender')
+			return render(request, 'gender/editGender.html', data)
+		
+	except Exception as e:
+		return HttpResponse(f'Error occured during edit gender: {e}')
 
-    data = {
-      'users': userObj
-    }
+def delete_gender(request, genderId):
+	try:
+		if request.method == 'POST':
+			genderObj = Genders.objects.get(pk=genderId)
+			genderObj.delete()
 
-    return render(request, 'user/userList.html', data)
-  
-  except Exception as e:
-    return HttpResponse(f'Error occured during load users: {e}')
-  
+			messages.success(request, 'Gender deleted successfully!')
+			return redirect('/genders/list')
+
+		else:
+			genderObj = Genders.objects.get(pk=genderId)
+
+			data = {
+				'gender': genderObj
+			}
+
+
+			return render(request, 'gender/deleteGender.html', data)
+	
+	except Exception as e:
+		return HttpResponse(f'Error occured during delete gender: {e}')
+
+def user_list(request):
+	try:
+		userObj = Users.objects.select_related('gender')
+
+		data = {
+			'users': userObj
+		}
+
+		return render(request, 'user/userList.html', data)
+	except Exception as e:
+		return HttpResponse(f'Error occured during load gender: {e}')
+
 def add_user(request):
 	try:
 		if request.method == 'POST':
@@ -141,7 +129,7 @@ def add_user(request):
 				'genders': genderObj
 			}
 
-			return render(request, 'user/AddUser.html', data)
+			return render(request, 'user/addUser.html', data)
 	except Exception as e:
 		return HttpResponse(f'Error occured during add user: {e}')
 
@@ -170,7 +158,7 @@ def edit_user(request, userId):
 
 			messages.success(request, 'Gender updated successfully!')
 			# gabalik sa iban nga link
-			return redirect('/user/userlist')
+			return redirect('/users/list')
 
 		
 		else:
@@ -195,7 +183,7 @@ def delete_user(request, userId):
 			userObj.delete()
 
 			messages.success(request, 'User deleted successfully!')
-			return redirect('/user/userlist')
+			return redirect('/users/list')
 
 		else:
 			userObj = Users.objects.get(pk=userId)
@@ -211,7 +199,26 @@ def delete_user(request, userId):
 	
 	except Exception as e:
 		return HttpResponse(f'Error occured during delete gender: {e}')
+<<<<<<< HEAD
 
 
 def login(request):
     return render(request,'user/login.html')
+=======
+	
+def user_profile(request, userId):
+	try:
+		userObj = Users.objects.get(pk=userId)
+		genderObj = Genders.objects.all()
+
+		data = {
+			'user': userObj,
+			'genders': genderObj
+		}
+
+
+		return render(request, 'user/userProfile.html', data)
+	
+	except Exception as e:
+		return HttpResponse(f'Error occured during load profile: {e}')
+>>>>>>> ff2d55e993facd80c5c0fa47dfef2bb1b2e230d6
