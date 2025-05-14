@@ -95,20 +95,34 @@
         </table>
     </div>
     <div class="flex justify-between px-10 pt-5 pb-10 ">
-              <div class="text-gray-500">Showing <span class="text-black">1</span> to <span class="text-black">3</span> out of <span class="text-black">12</span></div>
+              <div class="text-gray-500">Showing <span class="text-black">{{users.start_index}}</span> to <span class="text-black">{{users.end_index}}</span> out of <span class="text-black">{{user_count}} </span></div>
               <div class="flex gap-0">
-                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-                    <i class="fa-solid fa-less-than text-gray-600"></i>
-                </a>
-                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">1</a>
-                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">2</a>
-                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">3</a>
-                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-                    <i class="fa-solid fa-greater-than text-gray-600"></i>
-                </a>
+
+
+                {% if users.has_previous %}
+                    <a href="?page=1" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angles-left text-gray-600"></i>
+                    </a>
+                    <a href="?page={{ venues.previous_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angle-left text-gray-600"></i>
+                    </a>
+                {% endif %}
+
+                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">{{users.number}}</a>
+
+                {% if users.has_next %}
+                    <a href="?page={{users.next_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angle-right text-gray-600"></i>
+                    </a>
+                    <a href="?page={{users.paginator.num_pages}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angles-right text-gray-600"></i>
+                    </a>
+                {% endif %}
+
              </div>
             </div>
-          
   </div>
+
+
  
 {% endblock 'content' %}

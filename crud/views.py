@@ -7,6 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login as auth_login
 
+from django.contrib.auth.hashers import make_password
+from django.core.paginator import Paginator
+
+
 # Create your views here.
 currentUsername = ''
 currentPassword = ''
@@ -94,6 +98,13 @@ def delete_gender(request, genderId):
 def user_list(request):
 	try:
 		userObj = Users.objects.select_related('gender')
+
+		# pagination
+		p = Paginator(Users.objects.select_related('gender'), 10)
+		page = request.GET.get('page')
+		users = p.get_page(page)
+		user_count = Users.objects.count()
+
 
 		data = {
          'users': userObj,
@@ -238,6 +249,6 @@ def login(request):
     except Exception as e:
         return HttpResponse(f'Error occured during login: {e}')
 
-def logout_view(request):
+def logout(request):
     logout(request)
     return redirect('login')
