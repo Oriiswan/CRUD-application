@@ -8,7 +8,7 @@
 <div class="relative w-full px-6 flex justify-center mt-10">
     <div class="w-[85em] max-w-[90em] min-w-0">
         <!-- Search Bar Added Here -->
-        <form class="max-w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-6"  method = POST action = "{% url "search-users" %}">
+        <form class="max-w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-6"  method ="POST" action = "{% url "search-users" %}">
             {% csrf_token %}
             <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
             <div class="relative">
@@ -17,11 +17,12 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
                 </div>
-                <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search full names..." name='searched'>
+                <input type="search" id="searchInput" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search full names..." name='searched' 
+                value="{{ searched}}"  oninput="this.form.requestSubmit()">
                 <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
             </div>
         </form>
-
+    
         <div class="overflow-x-auto">
             <table class="w-full min-w-full text-sm text-left text-gray-500">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -49,6 +50,9 @@
                                 <td class="px-6 py-4">{{ user.username }}</td>
                             </tr>
                             {% endfor %}
+
+                        
+
                         {% else %}
                             <tr>
                                 <td colspan="7" class="px-6 py-4 text-center text-red-500">
@@ -65,8 +69,42 @@
                     {% endif %}
                 </tbody>
             </table>
+            {% comment %} pagination {% endcomment %}
+            {% if searched %}
+
+                <div class="flex justify-between px-10 pt-5 pb-10 ">    
+                    <div class="text-gray-500">Showing <span class="text-black">{{users.start_index}}</span> to <span class="text-black">{{users.end_index}}</span> out of <span class="text-black">{{user_count}} </span></div>
+                    <div class="flex gap-0">
+
+                    {% if users.has_previous %}
+                        <a href="?page=1&searched={{ searched|urlencode }}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                            <i class="fa-solid fa-angles-left text-gray-600"></i>
+                        </a>
+                        <a href="?page={{ users.previous_page_number}}&searched={{ searched|urlencode }}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                            <i class="fa-solid fa-angle-left text-gray-600"></i>
+                        </a>
+                    {% endif %} 
+
+                    <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">{{users.number}}</a>
+
+                    {% if users.has_next %}
+                        <a href="?page={{users.next_page_number}}&searched={{ searched|urlencode }}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                            <i class="fa-solid fa-angle-right text-gray-600"></i>
+                        </a>
+                        <a href="?page={{users.paginator.num_pages}}&searched={{ searched|urlencode }}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                            <i class="fa-solid fa-angles-right text-gray-600"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% endif %}
+            
+
         </div>
     </div>
 </div>
+
+
 
 {% endblock 'content' %}
