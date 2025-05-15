@@ -217,6 +217,9 @@
   }
 }
 @layer utilities {
+  .pointer-events-none {
+    pointer-events: none;
+  }
   .sr-only {
     position: absolute;
     width: 1px;
@@ -240,6 +243,12 @@
   .static {
     position: static;
   }
+  .inset-y-0 {
+    inset-block: calc(var(--spacing) * 0);
+  }
+  .start-0 {
+    inset-inline-start: calc(var(--spacing) * 0);
+  }
   .end-2 {
     inset-inline-end: calc(var(--spacing) * 2);
   }
@@ -260,6 +269,12 @@
   }
   .right-7 {
     right: calc(var(--spacing) * 7);
+  }
+  .bottom-2 {
+    bottom: calc(var(--spacing) * 2);
+  }
+  .bottom-2\.5 {
+    bottom: calc(var(--spacing) * 2.5);
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
@@ -339,11 +354,17 @@
   .mr-2 {
     margin-right: calc(var(--spacing) * 2);
   }
+  .mb-2 {
+    margin-bottom: calc(var(--spacing) * 2);
+  }
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
   }
   .mb-5 {
     margin-bottom: calc(var(--spacing) * 5);
+  }
+  .mb-6 {
+    margin-bottom: calc(var(--spacing) * 6);
   }
   .mb-7 {
     margin-bottom: calc(var(--spacing) * 7);
@@ -441,9 +462,6 @@
   .w-\[98em\] {
     width: 98em;
   }
-  .w-\[200px\] {
-    width: 200px;
-  }
   .w-full {
     width: 100%;
   }
@@ -456,11 +474,20 @@
   .max-w-\[98em\] {
     max-width: 98em;
   }
+  .max-w-full {
+    max-width: 100%;
+  }
   .max-w-md {
     max-width: var(--container-md);
   }
   .max-w-xl {
     max-width: var(--container-xl);
+  }
+  .min-w-0 {
+    min-width: calc(var(--spacing) * 0);
+  }
+  .min-w-full {
+    min-width: 100%;
   }
   .flex-1 {
     flex: 1;
@@ -617,10 +644,6 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .border-\[1px\] {
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-  }
   .border-r {
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
@@ -755,6 +778,12 @@
   }
   .py-\[6px\] {
     padding-block: 6px;
+  }
+  .ps-3 {
+    padding-inline-start: calc(var(--spacing) * 3);
+  }
+  .ps-10 {
+    padding-inline-start: calc(var(--spacing) * 10);
   }
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
@@ -950,6 +979,13 @@
       }
     }
   }
+  .hover\:bg-blue-800 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-blue-800);
+      }
+    }
+  }
   .hover\:bg-gray-50 {
     &:hover {
       @media (hover: hover) {
@@ -996,6 +1032,13 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-sky-100);
+      }
+    }
+  }
+  .hover\:text-blue-500 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-blue-500);
       }
     }
   }
@@ -1070,6 +1113,11 @@
       box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
   }
+  .focus\:ring-blue-300 {
+    &:focus {
+      --tw-ring-color: var(--color-blue-300);
+    }
+  }
   .focus\:ring-blue-500 {
     &:focus {
       --tw-ring-color: var(--color-blue-500);
@@ -1118,10 +1166,21 @@
       border-radius: var(--radius-lg);
     }
   }
+  .sm\:px-6 {
+    @media (width >= 40rem) {
+      padding-inline: calc(var(--spacing) * 6);
+    }
+  }
   .sm\:text-2xl {
     @media (width >= 40rem) {
       font-size: var(--text-2xl);
       line-height: var(--tw-leading, var(--text-2xl--line-height));
+    }
+  }
+  .sm\:text-sm {
+    @media (width >= 40rem) {
+      font-size: var(--text-sm);
+      line-height: var(--tw-leading, var(--text-sm--line-height));
     }
   }
   .md\:inset-0 {
@@ -1195,6 +1254,11 @@
       display: none;
     }
   }
+  .lg\:px-8 {
+    @media (width >= 64rem) {
+      padding-inline: calc(var(--spacing) * 8);
+    }
+  }
   .rtl\:text-right {
     &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
       text-align: right;
@@ -1208,16 +1272,6 @@
   .dark\:border-gray-600 {
     @media (prefers-color-scheme: dark) {
       border-color: var(--color-gray-600);
-    }
-  }
-  .dark\:bg-gray-50 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-gray-50);
-    }
-  }
-  .dark\:bg-gray-100 {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-gray-100);
     }
   }
   .dark\:bg-gray-700 {
