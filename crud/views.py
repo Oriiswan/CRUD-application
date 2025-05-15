@@ -275,7 +275,7 @@ def delete_user(request, userId):
 	except Exception as e:
 		return HttpResponse(f'Error occured during delete gender: {e}')
 
-
+##
 def login(request):
     global currentPassword
     global currentUsername
