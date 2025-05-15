@@ -122,7 +122,6 @@ def user_list(request):
 
 
 def add_user(request):
-search-auto
     try:
         if request.method == 'POST':
             fullName = request.POST.get('full_name')
@@ -183,6 +182,8 @@ search-auto
             return render(request, 'user/addUser.html', data)
     except Exception as e:
         return HttpResponse(f'Error occured during add user: {e}')
+
+def edit_user(request, userId):
 
 	try:
 		if request.method == 'POST':
