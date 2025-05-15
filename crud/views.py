@@ -12,6 +12,8 @@ from django.core.paginator import Paginator
 
 from django.core import serializers
 
+import json
+
 
 # Create your views here.
 currentUsername = ''
@@ -122,7 +124,6 @@ def user_list(request):
 
 
 def add_user(request):
-search-auto
     try:
         if request.method == 'POST':
             fullName = request.POST.get('full_name')
@@ -183,68 +184,6 @@ search-auto
             return render(request, 'user/addUser.html', data)
     except Exception as e:
         return HttpResponse(f'Error occured during add user: {e}')
-
-	try:
-		if request.method == 'POST':
-			fullName = request.POST.get('full_name')
-			gender = request.POST.get('gender')
-			birthDate = request.POST.get('birth_date')
-			address = request.POST.get('address')
-			contactNumber = request.POST.get('contact_number')
-			email = request.POST.get('email')
-			username = request.POST.get('username')
-			password = request.POST.get('password')
-			confirmPassword = request.POST.get('confirm_password')
-
-			form_data = {
-				'fullName': request.POST.get('full_name'),
-				'gender': request.POST.get('gender'),
-				'birthDate': request.POST.get('birth_date'),
-				'address': request.POST.get('address'),
-				'contactNumber': request.POST.get('contact_number'),
-				'email': request.POST.get('email'),
-				'username': request.POST.get('username'),
-			}
-
-			genderObj = Genders.objects.all()
-
-			# if username already in db:
-
-			if Users.objects.filter(username=username).exists():
-
-				data = {
-					'genders': genderObj,
-					'form_data': form_data,
-					'username_error': True
-				}
-
-				return render(request, 'user/addUser.html', data)
-
-			Users.objects.create(
-				full_name = fullName,
-				gender = Genders.objects.get(pk=gender),
-				birth_date = birthDate,
-				address = address,
-				contact_number = contactNumber,
-				email = email,
-				username = username,
-				password =make_password(password)
-			).save()
-
-			messages.success(request, 'User added successfully!')
-			return redirect('/users/list')
-
-		else:
-			genderObj = Genders.objects.all()
-
-			data = {
-				'genders': genderObj
-			}
-
-			return render(request, 'user/addUser.html', data)
-	except Exception as e:
-		return HttpResponse(f'Error occured during add user: {e}')
-
 
 
 def edit_user(request, userId):
@@ -362,7 +301,8 @@ def login(request):
         return HttpResponse(f'Error occured during login: {e}')
 ##2
 def logout(request):
-    logout(request)
+    from django.contrib.auth import logout as auth_logout
+    auth_logout(request)
     return redirect('login')
 
 
@@ -416,3 +356,29 @@ def search_users(request):
         }
         
         return render(request, 'user/searchUser.html', data)
+
+
+def live_search(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            query = data.get('query', '')
+            
+            # Search for users where full_name contains the query (case-insensitive)
+            users_result = Users.objects.filter(full_name__icontains=query)[:10]  # Limit to 10 results
+            
+            # Prepare the data for JSON response
+            users_data = []
+            for user in users_result:
+                users_data.append({
+                    'full_name': user.full_name,
+                    'user_id': user.user_id,
+                    'username': user.username
+                })
+            
+            return JsonResponse({'users': users_data})
+        
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
