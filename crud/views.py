@@ -4,8 +4,7 @@ from django.contrib import messages
 from .models import Genders, Users
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout, login, authenticate
 
 from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator
@@ -343,32 +342,32 @@ def delete_user(request, userId):
         return HttpResponse(f'Error occured during delete gender: {e}')
 
 ##
-def login(request):
-    global currentPassword
-    global currentUsername
-    try:
-        if request.method == 'POST':
-            users = Users.objects.all()
-            username = request.POST.get('username')
-            password = request.POST.get('password')
-            for i in users:
-                if username == i.username and check_password(password, i.password):
-                  currentUsername = username
-                  currentPassword = password
-                  return redirect('user_list')
+# def login(request):
+#     global currentPassword
+#     global currentUsername
+#     try:
+#         if request.method == 'POST':
+#             users = Users.objects.all()
+#             username = request.POST.get('username')
+#             password = request.POST.get('password')
+#             for i in users:
+#                 if username == i.username and check_password(password, i.password):
+#                   currentUsername = username
+#                   currentPassword = password
+#                   return redirect('user_list')
                 
-            return render(request, 'user/login.html')    
-        else:
-            messages.error(request, 'Incorrect data!')
-            return render(request, 'user/login.html')
+#             return render(request, 'user/login.html')    
+#         else:
+#             messages.error(request, 'Incorrect data!')
+#             return render(request, 'user/login.html')
                     
-    except Exception as e:
-        return HttpResponse(f'Error occured during login: {e}')
-##2
-def logout(request):
-    from django.contrib.auth import logout as auth_logout
-    auth_logout(request)
-    return redirect('login')
+#     except Exception as e:
+#         return HttpResponse(f'Error occured during login: {e}')
+# ##2
+# def logout(request):
+#     from django.contrib.auth import logout as auth_logout
+#     auth_logout(request)
+#     return redirect('login')
 
 
 def search_users(request):
@@ -391,6 +390,7 @@ def search_users(request):
         'username': currentUsername,
         'user_count': user_count,
         'searched': searched
+        }
         
         return render(request, 'user/searchUser.html', {'searched': '', 'users': []})
 
@@ -402,35 +402,34 @@ def profile_page(request):
     return render(request, 'user/profile.html', data)
     
 
-        }
            
         
 
-        return render(request, 'user/searchUser.html', data)
-    else:
-        searched = request.GET.get('searched', '').strip()
+    #     return render(request, 'user/searchUser.html', data)
+    # else:
+    #     searched = request.GET.get('searched', '').strip()
 
-        users_result = Users.objects.filter(full_name__icontains=searched)
+    #     users_result = Users.objects.filter(full_name__icontains=searched)
 
-        p = Paginator(users_result, 10)
-        page = request.GET.get('page')
-        users = p.get_page(page)
-        user_count = len(users_result)
-
-
+    #     p = Paginator(users_result, 10)
+    #     page = request.GET.get('page')
+    #     users = p.get_page(page)
+    #     user_count = len(users_result)
 
 
-        data = {
-        'users_result': users_result,
-        'users': users,
-        'password': currentPassword,
-        'username': currentUsername,
-        'user_count': user_count,
-        'searched': searched
+
+
+    #     data = {
+    #     'users_result': users_result,
+    #     'users': users,
+    #     'password': currentPassword,
+    #     'username': currentUsername,
+    #     'user_count': user_count,
+    #     'searched': searched
         
-        }
+    #     }
         
-        return render(request, 'user/searchUser.html', data)
+    #     return render(request, 'user/searchUser.html', data)
 
 
 def live_search(request):
@@ -457,3 +456,29 @@ def live_search(request):
             return JsonResponse({'error': str(e)}, status=400)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+user = ''
+
+def login_view(request):
+    global user
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Login successfully!')
+            return redirect('/users/list')  # Change to your desired redirect
+        else:
+            messages.error(request, 'Invalid username or password')
+    
+    
+
+    return render(request, 'user/login.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('/login')

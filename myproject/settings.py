@@ -79,7 +79,6 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'NAME': 'groupfifteendj_db',
         'PORT': '3308',
-        'PORT': '3306',
         'USER': 'root',
         'PASSWORD': '',
         'OPTIONS': {
@@ -132,9 +131,11 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'crud.Users'
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-LOGIN_URL = 'login'  # Where unauthenticated users are redirected
+LOGIN_URL = '/login/'  # Where unauthenticated users are redirected
 LOGIN_REDIRECT_URL = '/users/list'  # Where users go after successful login
-LOGOUT_REDIRECT_URL = 'login'  # Where users go after logout
+LOGOUT_REDIRECT_URL = '/login/'  # Where users go after logout
