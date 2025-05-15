@@ -18,6 +18,7 @@ urlpatterns = [
     path('users/delete/<int:userId>', views.delete_user, name='delete_user'),
 	
     # search URLs
-    path('users/search_users.html', views.search_users, name='search-users'),
+    path('users/search_users', views.search_users, name='search-users'),
+    path('users/profile', views.profile_page, name='profile'),
 
 ]

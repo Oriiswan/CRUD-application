@@ -292,6 +292,7 @@ def login(request):
                 
             return render(request, 'user/login.html')    
         else:
+            messages.error(request, 'Incorrect data!')
             return render(request, 'user/login.html')
                     
     except Exception as e:
@@ -310,3 +311,11 @@ def search_users(request):
     else:
         
         return render(request, 'user/searchUser.html', {'searched': '', 'users': []})
+
+def profile_page(request):
+    users = Users.objects.get(username = currentUsername)
+    data = {
+        'users': users
+	}
+    return render(request, 'user/profile.html', data)
+    
