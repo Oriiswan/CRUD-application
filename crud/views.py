@@ -8,7 +8,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login as auth_login
 
 from django.contrib.auth.hashers import make_password
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.core import serializers
 
@@ -363,20 +363,48 @@ def live_search(request):
         try:
             data = json.loads(request.body)
             query = data.get('query', '')
+            page_number = data.get('page', 1)
             
-            # Search for users where full_name contains the query (case-insensitive)
-            users_result = Users.objects.filter(full_name__icontains=query)[:10]  # Limit to 10 results
+            # Search for users
+            users_result = Users.objects.filter(full_name__icontains=query)
+            total_count = users_result.count()
+            
+            # Paginate the results
+            p = Paginator(users_result, 10)  # 10 users per page
+            try:
+                page_obj = p.page(page_number)
+            except (EmptyPage, PageNotAnInteger):
+                page_obj = p.page(1)
             
             # Prepare the data for JSON response
             users_data = []
-            for user in users_result:
+            for user in page_obj:
                 users_data.append({
-                    'full_name': user.full_name,
                     'user_id': user.user_id,
+                    'full_name': user.full_name,
+                    'gender': user.gender.gender,
+                    'birth_date': str(user.birth_date),
+                    'address': user.address,
+                    'contact_number': user.contact_number,
+                    'email': user.email,
                     'username': user.username
                 })
             
-            return JsonResponse({'users': users_data})
+            # Prepare pagination data
+            pagination_data = {
+                'users': users_data,
+                'current_page': page_obj.number,
+                'num_pages': p.num_pages,
+                'has_next': page_obj.has_next(),
+                'has_previous': page_obj.has_previous(),
+                'next_page': page_obj.next_page_number() if page_obj.has_next() else None,
+                'previous_page': page_obj.previous_page_number() if page_obj.has_previous() else None,
+                'start_index': page_obj.start_index(),
+                'end_index': page_obj.end_index(),
+                'total_count': total_count
+            }
+            
+            return JsonResponse(pagination_data)
         
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
