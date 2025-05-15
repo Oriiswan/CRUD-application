@@ -10,7 +10,7 @@
 <div class="relative overflow-x-auto w-full px-6  flex justify-center mt-10"> 
     <div class="w-[85em]  max-w-[90em">
         <!-- Search Bar Added Here -->
-        <form class="max-w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-6" id="searchForm" method="POST" action="{% url "search-users" %}">
+        <form class="max-w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-6" id="searchForm">
             {% csrf_token %}
             <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
             <div class="relative">
@@ -19,9 +19,8 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
                 </div>
-                <input type="search" id="searchInput" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search first names..." name='searched' oninput="liveSearch(this.value)">
-                <div id="searchResults" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg hidden max-h-60 overflow-y-auto"></div>
-                <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
+                <input type="search" id="searchInput" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search full names..." name='searched' oninput="searchUsers(this.value)">
+                <button type="button" id="searchButton" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
             </div>
         </form>
         
@@ -63,7 +62,7 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="userTableBody">
                 {% for user in users %}
                      {% if user.username != username and user.password != password %}
 
@@ -110,16 +109,15 @@
             </tbody>
         </table>
     </div>
-    <div class="flex justify-between px-10 pt-5 pb-10 ">
-              <div class="text-gray-500">Showing <span class="text-black">{{users.start_index}}</span> to <span class="text-black">{{users.end_index}}</span> out of <span class="text-black">{{user_count}} </span></div>
-              <div class="flex gap-0">
-
+    <div class="flex justify-between px-10 pt-5 pb-10 " id="paginationContainer">
+              <div class="text-gray-500">Showing <span class="text-black" id="startIndex">{{users.start_index}}</span> to <span class="text-black" id="endIndex">{{users.end_index}}</span> out of <span class="text-black" id="totalCount">{{user_count}} </span></div>
+              <div class="flex gap-0" id="paginationLinks">
 
                 {% if users.has_previous %}
                     <a href="?page=1" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
                         <i class="fa-solid fa-angles-left text-gray-600"></i>
                     </a>
-                    <a href="?page={{ venues.previous_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                    <a href="?page={{ users.previous_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
                         <i class="fa-solid fa-angle-left text-gray-600"></i>
                     </a>
                 {% endif %}
@@ -141,64 +139,164 @@
 
 <script>
 let debounceTimer;
+let currentSearchQuery = '';
+let currentPage = 1;
 
-function liveSearch(query) {
+
+function searchUsers(query) {
     clearTimeout(debounceTimer);
     
-    // Only proceed if query has at least 1 character
+    currentSearchQuery = query;
+    
+    
     if (query.length > 0) {
         debounceTimer = setTimeout(function() {
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            
-            fetch('{% url "live-search" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                body: JSON.stringify({
-                    'query': query
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById('searchResults');
-                resultsDiv.innerHTML = '';
-                
-                if (data.users.length > 0) {
-                    resultsDiv.classList.remove('hidden');
-                    
-                    data.users.forEach(user => {
-                        const item = document.createElement('div');
-                        item.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
-                        item.textContent = user.full_name;
-                        
-                        item.addEventListener('click', function() {
-                            document.getElementById('searchInput').value = user.full_name;
-                            resultsDiv.classList.add('hidden');
-                            document.getElementById('searchForm').submit();
-                        });
-                        
-                        resultsDiv.appendChild(item);
-                    });
-                } else {
-                    resultsDiv.classList.add('hidden');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            loadUserList(1, query);
         }, 300); // 300ms delay for debounce
-    } else {
-        document.getElementById('searchResults').classList.add('hidden');
     }
 }
 
-// Close suggestions when clicking outside
-document.addEventListener('click', function(event) {
-    if (!event.target.closest('#searchInput') && !event.target.closest('#searchResults')) {
-        document.getElementById('searchResults').classList.add('hidden');
+
+function loadUserList(page, searchQuery) {
+    currentPage = page;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    
+    fetch('{% url "live-search" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            'query': searchQuery,
+            'page': page
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        updateTableWithUsers(data);
+        updatePaginationInfo(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+
+function updateTableWithUsers(data) {
+    const tableBody = document.getElementById('userTableBody');
+    tableBody.innerHTML = '';
+    
+    if (data.users && data.users.length > 0) {
+        data.users.forEach(user => {
+            tableBody.innerHTML += `
+                <tr class="bg-white border-b border-gray-200 hover:bg-gray-50">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-700 whitespace-nowrap">
+                        ${user.full_name}
+                    </th>
+                    <td class="px-6 py-4">
+                        ${user.gender}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${user.birth_date}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${user.address}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${user.contact_number}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${user.email}
+                    </td>
+                    <td class="px-6 py-4">
+                        ${user.username}
+                    </td>
+                    <td class="px-4 py-4 md:px-6 md:py-4 text-sm md:text-[15px] flex items-end justify-end gap-2">
+                        <div>
+                            <a href="/users/edit/${user.user_id}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
+                                <i class="fas fa-edit mr-1"></i> <span class="hidden sm:inline">Edit</span>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/users/delete/${user.user_id}" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
+                                <i class="fas fa-trash-alt mr-1"></i> <span class="hidden sm:inline">Delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    } else {
+        
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="px-6 py-4 text-center text-red-500">
+                    ${currentSearchQuery ? `"${currentSearchQuery}" not found` : 'No users found'}
+                </td>
+            </tr>
+        `;
     }
+}
+
+
+function updatePaginationInfo(data) {
+
+    document.getElementById('startIndex').textContent = data.start_index || 0;
+    document.getElementById('endIndex').textContent = data.end_index || 0;
+    document.getElementById('totalCount').textContent = data.total_count || 0;
+    
+
+    const paginationLinks = document.getElementById('paginationLinks');
+    paginationLinks.innerHTML = '';
+    
+    if (data.has_previous) {
+        paginationLinks.innerHTML += `
+            <a href="#" onclick="loadUserList(1, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angles-left text-gray-600"></i>
+            </a>
+            <a href="#" onclick="loadUserList(${data.previous_page}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angle-left text-gray-600"></i>
+            </a>
+        `;
+    }
+    
+    paginationLinks.innerHTML += `
+        <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">${data.current_page}</a>
+    `;
+    
+    if (data.has_next) {
+        paginationLinks.innerHTML += `
+            <a href="#" onclick="loadUserList(${data.next_page}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angle-right text-gray-600"></i>
+            </a>
+            <a href="#" onclick="loadUserList(${data.num_pages}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angles-right text-gray-600"></i>
+            </a>
+        `;
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Search button click
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const query = document.getElementById('searchInput').value;
+        searchUsers(query);
+    });
+    
+
+    document.querySelectorAll('#paginationLinks a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!this.href.includes('return false')) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const page = url.searchParams.get('page') || 1;
+                loadUserList(page, currentSearchQuery);
+            }
+        });
+    });
 });
 </script>
  
