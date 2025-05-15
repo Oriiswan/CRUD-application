@@ -278,7 +278,7 @@ def delete_user(request, userId):
     except Exception as e:
         return HttpResponse(f'Error occured during delete gender: {e}')
 
-
+##
 def login(request):
     global currentPassword
     global currentUsername
@@ -295,6 +295,7 @@ def login(request):
                 
             return render(request, 'user/login.html')    
         else:
+            messages.error(request, 'Incorrect data!')
             return render(request, 'user/login.html')
                     
     except Exception as e:
@@ -327,6 +328,17 @@ def search_users(request):
         'user_count': user_count,
         'searched': searched
         
+<<<<<<< HEAD
+        return render(request, 'user/searchUser.html', {'searched': '', 'users': []})
+
+def profile_page(request):
+    users = Users.objects.get(username = currentUsername)
+    data = {
+        'users': users
+	}
+    return render(request, 'user/profile.html', data)
+    
+=======
         }
            
         
@@ -382,3 +394,4 @@ def live_search(request):
             return JsonResponse({'error': str(e)}, status=400)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+>>>>>>> main
