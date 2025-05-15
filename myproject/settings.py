@@ -79,6 +79,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'NAME': 'groupfifteendj_db',
         'PORT': '3308',
+        'PORT': '3306',
         'USER': 'root',
         'PASSWORD': '',
         'OPTIONS': {
