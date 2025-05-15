@@ -169,7 +169,7 @@ def add_user(request):
 			).save()
 
 			messages.success(request, 'User added successfully!')
-			return redirect('/users/add')
+			return redirect('/users/list')
 
 		else:
 			genderObj = Genders.objects.all()
@@ -296,7 +296,7 @@ def login(request):
                     
     except Exception as e:
         return HttpResponse(f'Error occured during login: {e}')
-
+##2
 def logout(request):
     logout(request)
     return redirect('login')
