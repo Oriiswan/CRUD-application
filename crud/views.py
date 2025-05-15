@@ -185,6 +185,70 @@ def add_user(request):
     except Exception as e:
         return HttpResponse(f'Error occured during add user: {e}')
 
+def edit_user(request, userId):
+
+	try:
+		if request.method == 'POST':
+			fullName = request.POST.get('full_name')
+			gender = request.POST.get('gender')
+			birthDate = request.POST.get('birth_date')
+			address = request.POST.get('address')
+			contactNumber = request.POST.get('contact_number')
+			email = request.POST.get('email')
+			username = request.POST.get('username')
+			password = request.POST.get('password')
+			confirmPassword = request.POST.get('confirm_password')
+
+			form_data = {
+				'fullName': request.POST.get('full_name'),
+				'gender': request.POST.get('gender'),
+				'birthDate': request.POST.get('birth_date'),
+				'address': request.POST.get('address'),
+				'contactNumber': request.POST.get('contact_number'),
+				'email': request.POST.get('email'),
+				'username': request.POST.get('username'),
+			}
+
+			genderObj = Genders.objects.all()
+
+			# if username already in db:
+
+			if Users.objects.filter(username=username).exists():
+
+				data = {
+					'genders': genderObj,
+					'form_data': form_data,
+					'username_error': True
+				}
+
+				return render(request, 'user/addUser.html', data)
+
+			Users.objects.create(
+				full_name = fullName,
+				gender = Genders.objects.get(pk=gender),
+				birth_date = birthDate,
+				address = address,
+				contact_number = contactNumber,
+				email = email,
+				username = username,
+				password =make_password(password)
+			).save()
+
+			messages.success(request, 'User added successfully!')
+			return redirect('/users/list')
+
+		else:
+			genderObj = Genders.objects.all()
+
+			data = {
+				'genders': genderObj
+			}
+
+			return render(request, 'user/addUser.html', data)
+	except Exception as e:
+		return HttpResponse(f'Error occured during add user: {e}')
+
+
 
 def edit_user(request, userId):
     try:
@@ -328,7 +392,6 @@ def search_users(request):
         'user_count': user_count,
         'searched': searched
         
-<<<<<<< HEAD
         return render(request, 'user/searchUser.html', {'searched': '', 'users': []})
 
 def profile_page(request):
@@ -338,7 +401,7 @@ def profile_page(request):
 	}
     return render(request, 'user/profile.html', data)
     
-=======
+
         }
            
         
@@ -394,4 +457,3 @@ def live_search(request):
             return JsonResponse({'error': str(e)}, status=400)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
->>>>>>> main
