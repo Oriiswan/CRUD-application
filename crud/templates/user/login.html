@@ -62,8 +62,8 @@
       </header>
 
 
-<div class="flex h-screen w-full items-center justify-center">
-  <form method="POST" class="w-[33em] rounded-md shadow-lg">
+<div class="flex min-h-screen w-full items-center justify-center bg-gray-100 px-2">
+  <form method="POST" class="w-full max-w-md rounded-md shadow-lg bg-white">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}">
     {% if error %}<p class="error">{{ error }}</p>{% endif %}
@@ -73,15 +73,15 @@
     </div>
     <div class="px-5 py-7">
       <label for="username">Username</label>
-      <input type="text" name="username" id='username' class="h-[2.3em] w-full rounded-sm border-1 border-gray-300" />
+      <input type="text" name="username" id='username' class="h-[2.3em] w-full rounded-sm border border-gray-300 mt-1 px-2" />
       <div class="mt-5">
         <label for="password">Password</label>
-        <input type="password" name="password" id='password' class="h-[2.3em] w-full rounded-sm border-1 border-gray-300" />
+        <input type="password" name="password" id='password' class="h-[2.3em] w-full rounded-sm border border-gray-300 mt-1 px-2" />
         <div class="mt-2 flex justify-end text-[12px]">
           <a href="#" class="text-blue-500 underline hover:text-blue-700">Forgot password?</a>
         </div>
       </div>
-      <div class="mb-7 flex items-center gap-2">
+      <div class="mb-7 flex items-center gap-2 mt-4">
         <input type="checkbox" class="cursor-pointer" />
         <p>Remember me</p>
       </div>
