@@ -6,6 +6,113 @@
 
 {% include "includes/sidebar.html" %}
 
+
+<div class="relative overflow-x-auto w-full px-2 md:px-6 flex justify-center mt-6 md:mt-10"> 
+    <div class="w-full max-w-screen-xl">
+        <!-- Search Bar Added Here -->
+        <form class="w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-6" id="searchForm">
+            {% csrf_token %}
+            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="search" id="searchInput" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search full names..." name='searched' oninput="searchUsers(this.value)">
+                <button type="button" id="searchButton" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
+            </div>
+        </form>
+        
+      <div class='flex flex-col md:flex-row justify-between my-7 gap-4'>
+        <h2 class='text-2xl md:text-3xl font-medium'>All Users</h2>
+        <a href="/users/add" class="w-full md:w-auto"> 
+          <button class='w-full md:w-auto text-center bg-blue-600 text-white font-medium py-2 px-4 md:py-[8px] md:px-[15px] rounded-md hover:bg-blue-500 cursor-pointer'>
+            <span class='font-bold text-xl'>+</span> Add User
+          </button>
+        </a>
+      </div>
+      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 min-w-[600px]">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-100  dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Full Name
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Gender
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Birth Date
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Address
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Contact Number
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Email
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        Username
+                    </th>
+                    <th scope="col" class="px-2 md:px-6 py-3">
+                        <span class="sr-only">Edit</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                {% for user in users %}
+                     {% if user.username != username and user.password != password %}
+
+                    <tr class="bg-white border-b border-gray-200 hover:bg-gray-50 ">
+                        <th scope="row" class="px-2 md:px-6 py-4 font-medium text-gray-700 whitespace-nowrap   ">
+                            {{ user.full_name }}
+                        </th>
+                        <td class="px-2 md:px-6 py-4">
+                            {{ user.gender.gender }}
+                        </td>
+                        <td class="px-2 md:px-6 py-4">
+                            {{ user.birth_date}}
+                        </td>
+                        <td class="px-2 md:px-6 py-4">
+                            {{ user.address}}
+                        </td>
+                        <td class="px-2 md:px-6 py-4">
+                            {{ user.contact_number}}
+                        </td>
+                        <td class="px-2 md:px-6 py-4">
+                            {{ user.email}}
+                        </td>
+                        <td class="px-2 md:px-6 py-4">
+                            {{ user.username}}
+                        </td>
+                        <td class="px-2 md:px-4 py-4 md:px-6 md:py-4 text-sm md:text-[15px] flex flex-col sm:flex-row items-end justify-end gap-2">
+                            <div>
+                                <a href="/users/edit/{{user.user_id}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
+                                    <i class="fas fa-edit mr-1"></i> <span class="hidden sm:inline">Edit</span>
+                                </a>
+                            </div>
+                            
+                            <div>
+                                <a href="/users/delete/{{user.user_id}}" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
+                                    <i class="fas fa-trash-alt mr-1"></i> <span class="hidden sm:inline">Delete</span>
+                                </a>
+                            </div>
+                            
+                        </td>
+                    </tr>
+                 {% endif %}
+                {% endfor %}
+                
+            </tbody>
+        </table>
+    </div>
+    <div class="flex flex-col md:flex-row justify-between gap-4 px-2 md:px-10 pt-5 pb-10 " id="paginationContainer">
+              <div class="text-gray-500">Showing <span class="text-black" id="startIndex">{{users.start_index}}</span> to <span class="text-black" id="endIndex">{{users.end_index}}</span> out of <span class="text-black" id="totalCount">{{user_count}} </span></div>
+              <div class="flex flex-wrap gap-2 md:gap-0" id="paginationLinks">
+
 <div class="relative w-full px-2 sm:px-4 md:px-6 flex justify-center mt-4 sm:mt-6">
   <div class="w-full max-w-[98em]">
     <!-- Search Bar -->
@@ -278,6 +385,57 @@ function updateTableWithUsers(data) {
       tableBody.innerHTML += mainRow + infoRow;
     });
     
+    if (data.users && data.users.length > 0) {
+        data.users.forEach(user => {
+            tableBody.innerHTML += `
+                <tr class="bg-white border-b border-gray-200 hover:bg-gray-50">
+                    <th scope="row" class="px-2 md:px-6 py-4 font-medium text-gray-700 whitespace-nowrap">
+                        ${user.full_name}
+                    </th>
+                    <td class="px-2 md:px-6 py-4">
+                        ${user.gender}
+                    </td>
+                    <td class="px-2 md:px-6 py-4">
+                        ${user.birth_date}
+                    </td>
+                    <td class="px-2 md:px-6 py-4">
+                        ${user.address}
+                    </td>
+                    <td class="px-2 md:px-6 py-4">
+                        ${user.contact_number}
+                    </td>
+                    <td class="px-2 md:px-6 py-4">
+                        ${user.email}
+                    </td>
+                    <td class="px-2 md:px-6 py-4">
+                        ${user.username}
+                    </td>
+                    <td class="px-2 md:px-4 py-4 md:px-6 md:py-4 text-sm md:text-[15px] flex flex-col sm:flex-row items-end justify-end gap-2">
+                        <div>
+                            <a href="/users/edit/${user.user_id}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
+                                <i class="fas fa-edit mr-1"></i> <span class="hidden sm:inline">Edit</span>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/users/delete/${user.user_id}" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
+                                <i class="fas fa-trash-alt mr-1"></i> <span class="hidden sm:inline">Delete</span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    } else {
+        
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="px-6 py-4 text-center text-red-500">
+                    ${currentSearchQuery ? `"${currentSearchQuery}" not found` : 'No users found'}
+                </td>
+            </tr>
+        `;
+    }
+
     // Add event listeners to info buttons
     setTimeout(() => {
       initInfoButtons();
@@ -292,6 +450,7 @@ function updateTableWithUsers(data) {
       </tr>
     `;
   }
+
 }
 
 function updatePaginationInfo(data) {
