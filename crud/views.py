@@ -334,12 +334,42 @@ def search_users(request):
 
 
 def profile_page(request):
+    try:
+        user = Users.objects.get(username=request.user.username)
+        data = {'users': user}
+        
+        if request.method == 'POST':
+            # Handle password change if fields are provided
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            if current_password and new_password and confirm_password:
+                if not user.check_password(current_password):
+                    messages.error(request, 'Current password is incorrect')
+                elif new_password != confirm_password:
+                    messages.error(request, 'New passwords do not match')
+                elif current_password == new_password:
+                    messages.error(request, 'New password must be different from current password')
+                else:
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Password changed successfully. Please login again.')
+                    logout(request)
+                    return redirect('login')  # Redirect to login page after password change
+            
+            return render(request, 'user/profile.html', data)
+        
+        return render(request, 'user/profile.html', data)
     users = Users.objects.get(username = request.user)
     data = {
         'users': users
 	}
     return render(request, 'user/profile.html', data)
     
+    except Users.DoesNotExist:
+        messages.error(request, 'User not found')
+        return redirect('login')
 
            
         
@@ -446,6 +476,8 @@ def login_view(request):
 
     return render(request, 'user/login.html')
 
+
+
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.hashers import check_password
@@ -478,8 +510,9 @@ def change_password(request):
         response_data['django_messages'] = [{'message': msg.message, 'tags': msg.tags} for msg in storage]
         
         return JsonResponse(response_data)
-    
     return render(request, 'profile.html')
+  
+  
 def logout_view(request):
     logout(request)
     return redirect('/login')
