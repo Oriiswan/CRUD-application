@@ -5,6 +5,8 @@ from .models import Genders, Users
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
 
 from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -106,12 +108,12 @@ def user_list(request):
         page = request.GET.get('page')
         users = p.get_page(page)
         user_count = Users.objects.count()
-
+        username = request.user.username
 
         data = {
          'users': users,
          'password': currentPassword,
-         'username': currentUsername,
+         'username': username,
          'user_count': user_count
     
            
@@ -330,8 +332,9 @@ def search_users(request):
         
         return render(request, 'user/searchUser.html', {'searched': '', 'users': []})
 
+
 def profile_page(request):
-    users = Users.objects.get(username = currentUsername)
+    users = Users.objects.get(username = request.user)
     data = {
         'users': users
 	}
@@ -443,6 +446,40 @@ def login_view(request):
 
     return render(request, 'user/login.html')
 
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import check_password
+
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import redirect, render
+
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        response_data = {'success': False, 'message': '', 'errors': {}}
+        
+        if not request.user.check_password(current_password):
+            response_data['errors']['current_password'] = 'Current password is incorrect'
+        elif new_password != confirm_password:
+            response_data['errors']['confirm_password'] = 'New passwords do not match'
+        else:
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            response_data['success'] = True
+            response_data['message'] = 'Password changed successfully!'
+        
+        # Convert messages to JSON
+        storage = messages.get_messages(request)
+        response_data['django_messages'] = [{'message': msg.message, 'tags': msg.tags} for msg in storage]
+        
+        return JsonResponse(response_data)
+    
+    return render(request, 'profile.html')
 def logout_view(request):
     logout(request)
     return redirect('/login')
