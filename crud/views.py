@@ -5,6 +5,8 @@ from .models import Genders, Users
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth import update_session_auth_hash
+from django.http import JsonResponse
 
 from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -106,12 +108,12 @@ def user_list(request):
         page = request.GET.get('page')
         users = p.get_page(page)
         user_count = Users.objects.count()
-
+        username = request.user.username
 
         data = {
          'users': users,
          'password': currentPassword,
-         'username': currentUsername,
+         'username': username,
          'user_count': user_count
     
            
@@ -330,13 +332,39 @@ def search_users(request):
         
         return render(request, 'user/searchUser.html', {'searched': '', 'users': []})
 
+
 def profile_page(request):
-    users = Users.objects.get(username = currentUsername)
-    data = {
-        'users': users
-	}
-    return render(request, 'user/profile.html', data)
+    try:
+        user = Users.objects.get(username=request.user.username)
+        data = {'users': user}
+        
+        if request.method == 'POST':
+            # Handle password change if fields are provided
+            current_password = request.POST.get('current_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            if current_password and new_password and confirm_password:
+                if not user.check_password(current_password):
+                    messages.error(request, 'Current password is incorrect')
+                elif new_password != confirm_password:
+                    messages.error(request, 'New passwords do not match')
+                elif current_password == new_password:
+                    messages.error(request, 'New password must be different from current password')
+                else:
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, 'Password changed successfully. Please login again.')
+                    logout(request)
+                    return redirect('login')  # Redirect to login page after password change
+            
+            return render(request, 'user/profile.html', data)
+        
+        return render(request, 'user/profile.html', data)
     
+    except Users.DoesNotExist:
+        messages.error(request, 'User not found')
+        return redirect('login')
 
            
         
@@ -443,6 +471,9 @@ def login_view(request):
 
     return render(request, 'user/login.html')
 
+
+
+    return render(request, 'profile.html')
 def logout_view(request):
     logout(request)
     return redirect('/login')
