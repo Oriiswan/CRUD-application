@@ -361,6 +361,11 @@ def profile_page(request):
             return render(request, 'user/profile.html', data)
         
         return render(request, 'user/profile.html', data)
+    users = Users.objects.get(username = request.user)
+    data = {
+        'users': users
+	}
+    return render(request, 'user/profile.html', data)
     
     except Users.DoesNotExist:
         messages.error(request, 'User not found')
@@ -473,7 +478,41 @@ def login_view(request):
 
 
 
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.hashers import check_password
+
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
+from django.shortcuts import redirect, render
+
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        response_data = {'success': False, 'message': '', 'errors': {}}
+        
+        if not request.user.check_password(current_password):
+            response_data['errors']['current_password'] = 'Current password is incorrect'
+        elif new_password != confirm_password:
+            response_data['errors']['confirm_password'] = 'New passwords do not match'
+        else:
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+            response_data['success'] = True
+            response_data['message'] = 'Password changed successfully!'
+        
+        # Convert messages to JSON
+        storage = messages.get_messages(request)
+        response_data['django_messages'] = [{'message': msg.message, 'tags': msg.tags} for msg in storage]
+        
+        return JsonResponse(response_data)
     return render(request, 'profile.html')
+  
+  
 def logout_view(request):
     logout(request)
     return redirect('/login')

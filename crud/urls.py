@@ -26,6 +26,7 @@ urlpatterns = [
     path('users/profile', login_required(views.profile_page), name='profile'),
     path('users/live-search', login_required(views.live_search), name='live-search'),
     
+    path('change-password/', views.change_password, name='change_password'),
 
 
 
