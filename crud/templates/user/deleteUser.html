@@ -1,13 +1,13 @@
 {% extends "layout/base.html" %}
 
 {% block 'title' %}Delete User{% endblock 'title' %}
-
+{% block 'nav' %}{{request.user.username}}{% endblock 'nav' %}
 {% block 'content' %}
 {% include "includes/sidebar.html" %}
 
 <div class="p-4 sm:p-6  flex w-full h-full justify-center items-center">
   <div class="w-[90%] h-[80%]  bg-white rounded-xl shadow-md overflow-hidden">
-    <!-- Header -->
+ 
     <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 sm:px-8 sm:py-6">
       <h1 class="text-xl sm:text-2xl font-bold text-white">
         <i class="fas fa-exclamation-triangle mr-2"></i> Confirm User Deletion
@@ -15,7 +15,7 @@
       <p class="mt-1 text-blue-100">This action cannot be undone</p>
     </div>
     
-    <!-- Warning Banner -->
+
     <div class="bg-red-50 border-l-4 border-red-500 p-4">
       <div class="flex">
         <div class="flex-shrink-0">
@@ -30,10 +30,10 @@
       </div>
     </div>
 
-    <!-- User Details Card -->
+
     <div class="border-b border-gray-200 px-6 py-4 sm:px-8">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <!-- Left Column -->
+
         <div class="space-y-4">
           <div>
             <label class="block text-md font-medium text-gray-500 uppercase tracking-wider">Full Name</label>
@@ -51,7 +51,7 @@
           </div>
         </div>
         
-        <!-- Right Column -->
+  
         <div class="space-y-4 mb-20" >
           <div>
             <label class="block text-md font-medium text-gray-500 uppercase tracking-wider">Contact</label>
@@ -71,7 +71,7 @@
       </div>
     </div>
 
-    <!-- Delete Form -->
+
     <form action="/users/delete/{{ user.user_id}}" method="post" class="px-6 py-4 sm:px-8">
       {% csrf_token %}
       <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3">

@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block 'title' %} Edit User {% endblock 'title' %}
-
+{% block 'nav' %}{{request.user.username}}{% endblock 'nav' %}
 {% block 'content' %}
 {% include "includes/sidebar.html" %}
 

@@ -1,27 +1,51 @@
 {% extends "layout/base.html" %}
 
 {% block 'title' %}Add Gender{% endblock 'title' %}
-{% block 'nav' %}Add Gender{% endblock 'nav' %}
+{% block 'nav' %}{{request.user.username}}{% endblock 'nav' %}
 {% block 'content' %}
-
 {% include "includes/sidebar.html" %}
 
-<div class='flex w-full mt-30 justify-center items-center'>
-  <form class='w-130  h-75  rounded-xl shadow-lg p-7 relative ' action="/genders/add" method='POST'>
-    {% csrf_token %}
-    <a href="/genders/list" class='text-blue-500 text-[19px] dark:hover:text-blue-800 '>
-      - Back to Gender List 
-    </a>
-    <h2 class='text-3xl font-medium my-5'>Add New Gender</h2>
-  <label for="gender" class='font-medium'>Gender Name <span class="text-red-500">*</span></label>
-  <input list='languages' class='border-1 p-[20px] w-full mt-2 border-gray-400 rounded-md block h-[30px]' placeholder = 'e.g. Male, Female, Non-binary' type="text" name='gender' required>
-  <datalist id='languages'>
-    <option value="Male"></option>
-    <option value="Female"></option>
-    <option value="Non-binary"></option>
-  </datalist>
-  <button type='submit' value='submit' class='bg-blue-700 text-white p-1 px-5 rounded-md mt-8 absolute right-7 font-bold dark:hover:bg-blue-400 cursor-pointer'>Save Gender</button>
-</form>
+<div class="w-full inset-0 bg-gray-100 p-2 md:p-4 overflow-y-auto">
+  <div class="">
+    <!-- Header -->
+    <div class="bg-blue-600 py-3 md:py-4 px-4 md:px-6 rounded-t-lg">
+      <div class="flex justify-between items-center">
+        <h1 class="text-xl md:text-2xl font-bold text-white">Add New Gender</h1>
+        <a href="/genders/list" class="text-white hover:text-blue-200">
+          <i class="fas fa-times text-lg md:text-xl"></i>
+        </a>
+      </div>
+    </div>
+    
+    <!-- Form Container -->
+    <div class="bg-white rounded-b-lg shadow-lg">
+      <form action="/genders/add" method='post' class="p-4 md:p-6 space-y-4 md:space-y-6">
+        {% csrf_token %}
+        
+        <!-- Form Field -->
+        <div>
+          <label for="gender" class="block text-sm font-medium text-gray-700">Gender Name*</label>
+          <input list="genders" type="text" id="gender" name="gender" placeholder="e.g. Male, Female, Non-binary" required
+                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          <datalist id="genders">
+            <option value="Male"></option>
+            <option value="Female"></option>
+            <option value="Non-binary"></option>
+          </datalist>
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-4 pt-4 md:pt-6 border-t border-gray-200">
+          <a href="/genders/list" class="px-3 md:px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Cancel
+          </a>
+          <button type="submit" class="px-3 md:px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            Save Gender
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 {% endblock 'content' %}
