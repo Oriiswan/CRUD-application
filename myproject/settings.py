@@ -77,7 +77,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': '127.0.0.1',
-        'NAME': 'groupfifteendj_db',
+        'NAME': 'buensalido_db',
         'PORT': '3306',
         'USER': 'root',
         'PASSWORD': '',

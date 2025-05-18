@@ -50,8 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>{% block 'title' %}{% endblock 'title' %}</title>
 </head>
-<body class='pl-0 md:pl-[295px] mb-100 bg-gray-100'>
-  <header class="bg-white shadow-sm">
+<body class="2xl:pl-[255px] xl:pl-[255px] lg:pl-[255px]  mb-100 bg-gray-100">
+  <header class="bg-white shadow-sm  ">
         <div class="flex items-center justify-between px-4 md:px-6 py-3 h-24">
           <div class="flex items-center">
             <button id="sidebarToggle" class="text-gray-500 focus:outline-none lg:hidden">
@@ -60,7 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
             <h2 class="text-lg md:text-xl font-semibold text-gray-800 ml-4">{% block 'nav' %}{% endblock 'nav' %}</h2>
           </div>
           <div class="flex items-center">
-            
+            <div class="relative">
+              <button class="text-gray-500 focus:outline-none">
+                <i class="fas fa-bell"></i>
+              </button>
+            </div>
             <div class="ml-4 relative">
               <a href='/users/profile' class="flex items-center focus:outline-none">
                 <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg"  alt="User">
@@ -105,6 +109,34 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all anchor tags in the sidebar except the logo link
+    const links = document.querySelectorAll('#logo-sidebar ul a:not([href^="https://github.com"])');
+    
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Don't intercept clicks if it's the logout link
+            if (this.getAttribute('href') === "{% url 'logout' %}") {
+                return true;
+            }
+            
+            e.preventDefault();
+            const targetUrl = this.getAttribute('href');
+            
+            // Add loading indicator or transition effect
+            document.body.style.opacity = '0.8';
+            document.body.style.transition = 'opacity 0.3s';
+            
+            // Delay the navigation
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 500); // 1000ms = 1 second delay
+        });
+    });
+});
+
+  
   </script>
 
 

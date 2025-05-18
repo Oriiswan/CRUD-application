@@ -1,14 +1,14 @@
 {% extends "layout/base.html" %}
 
 {% block 'title' %}User List{% endblock 'title' %}
-{% block 'nav' %}User List{% endblock 'nav' %}
+{% block 'nav' %}{{username}}{% endblock 'nav' %}
 {% block 'content' %}
 
 {% include "includes/sidebar.html" %}
 
 
 <div class="relative overflow-x-auto w-full px-2 md:px-6 flex justify-center mt-6 md:mt-10"> 
-    <div class="w-full max-w-screen-xl">
+    <div class="w-full max-w-screen lg-w-screen ">
         <!-- Search Bar Added Here -->
         <form class="w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-6" id="searchForm">
             {% csrf_token %}
@@ -113,277 +113,80 @@
               <div class="text-gray-500">Showing <span class="text-black" id="startIndex">{{users.start_index}}</span> to <span class="text-black" id="endIndex">{{users.end_index}}</span> out of <span class="text-black" id="totalCount">{{user_count}} </span></div>
               <div class="flex flex-wrap gap-2 md:gap-0" id="paginationLinks">
 
-<div class="relative w-full px-2 sm:px-4 md:px-6 flex justify-center mt-4 sm:mt-6">
-  <div class="w-full max-w-[98em]">
-    <!-- Search Bar -->
-    <form class="max-w-full mx-auto bg-white rounded-lg shadow-md border border-gray-200 mb-4 sm:mb-6" id="searchForm">
-      {% csrf_token %}
-      <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-      <div class="relative">
-        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-          <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-          </svg>
-        </div>
-        <input type="search" id="searchInput" class="block w-full p-2 sm:p-4 ps-10 text-sm p-20 text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500" placeholder="Search full names..." name='searched' oninput="searchUsers(this.value)">
-        <button type="button" id="searchButton" class="text-white absolute end-2.5  bottom-0 right-0 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none  focus:ring-blue-300 font-medium rounded-lg text-xs sm:text-sm px-4 p-2 sm:py-2">Search</button>
-      </div>
-    </form>
-    
-    <div class='flex flex-col sm:flex-row justify-between my-4 sm:my-7 gap-4 px-2'>
-      <h2 class='text-xl sm:text-2xl md:text-3xl font-medium'>All Users</h2>
-      <a href="/users/add" class=" sm:w-auto"> 
-        <button class='w-full sm:w-auto text-center bg-blue-600 text-white font-medium py-2 px-4 md:py-[8px] md:px-[15px] rounded-md hover:bg-blue-500 cursor-pointer'>
-          <span class='font-bold text-xl'>+</span> Add User
-        </button>
-      </a>
-    </div>
+                {% if users.has_previous %}
+                    <a href="?page=1" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angles-left text-gray-600"></i>
+                    </a>
+                    <a href="?page={{ users.previous_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angle-left text-gray-600"></i>
+                    </a>
+                {% endif %}
 
-    <!-- Table container with horizontal scroll for small screens -->
-    <div class="relative overflow-x-auto shadow-md rounded-lg">
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-auto">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:text-gray-400">
-          <tr>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3">
-              Full Name
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3">
-              Gender
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3 hidden sm:table-cell">
-              Birth Date
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3 hidden md:table-cell">
-              Address
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3 hidden md:table-cell">
-              Contact
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3 hidden lg:table-cell">
-              Email
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3 hidden lg:table-cell">
-              Username
-            </th>
-            <th scope="col" class="px-3 py-2 sm:px-4 md:px-6 sm:py-3 text-right">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody id="userTableBody">
-          {% for user in users %}
-            {% if user.username != username and user.password != password %}
-              <tr class="bg-white border-b border-gray-200 hover:bg-gray-50">
-                <th scope="row" class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 font-medium text-gray-700 whitespace-nowrap">
-                  {{ user.full_name }}
-                </th>
-                <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4">
-                  {{ user.gender.gender }}
-                </td>
-                <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden sm:table-cell">
-                  {{ user.birth_date}}
-                </td>
-                <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden md:table-cell">
-                  {{ user.address}}
-                </td>
-                <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden md:table-cell">
-                  {{ user.contact_number}}
-                </td>
-                <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden lg:table-cell">
-                  {{ user.email}}
-                </td>
-                <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden lg:table-cell">
-                  {{ user.username}}
-                </td>
-                <td class="px-2 py-2 sm:px-3 md:px-6 sm:py-4 text-xs sm:text-sm md:text-[15px] flex items-center justify-end gap-2">
-                  <a href="/users/edit/{{user.user_id}}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
-                    <i class="fas fa-edit mr-1"></i><span class="hidden sm:inline">Edit</span>
-                  </a>
-                  <a href="/users/delete/{{user.user_id}}" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
-                    <i class="fas fa-trash-alt mr-1"></i><span class="hidden sm:inline">Delete</span>
-                  </a>
-                  <!-- Mobile info button to show hidden details -->
-                  <button class="sm:hidden text-gray-600 hover:text-blue-600 info-button" data-id="{{user.user_id}}">
-                    <i class="fas fa-info-circle"></i>
-                  </button>
-                </td>
-              </tr>
-              <!-- Mobile info row (hidden by default) -->
-              <tr id="info-row-{{user.user_id}}" class="bg-gray-50 border-b border-gray-200 hidden sm:hidden info-row">
-                <td colspan="4" class="px-3 py-3">
-                  <div class="text-sm">
-                    <p><span class="font-medium">Birth Date:</span> {{ user.birth_date }}</p>
-                    <p><span class="font-medium">Address:</span> {{ user.address }}</p>
-                    <p><span class="font-medium">Contact:</span> {{ user.contact_number }}</p>
-                    <p><span class="font-medium">Email:</span> {{ user.email }}</p>
-                    <p><span class="font-medium">Username:</span> {{ user.username }}</p>
-                  </div>
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    
-    <!-- Pagination -->
-    <div class="flex flex-col sm:flex-row justify-between items-center px-3 sm:px-6 py-4 gap-3" id="paginationContainer">
-      <div class="text-sm text-gray-500 text-center sm:text-left">
-        Showing <span class="text-black" id="startIndex">{{users.start_index}}</span> to 
-        <span class="text-black" id="endIndex">{{users.end_index}}</span> out of 
-        <span class="text-black" id="totalCount">{{user_count}}</span>
-      </div>
-      <div class="flex gap-0 justify-center" id="paginationLinks">
-        {% if users.has_previous %}
-          <a href="?page=1" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-            <i class="fa-solid fa-angles-left text-gray-600"></i>
-          </a>
-          <a href="?page={{ users.previous_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-            <i class="fa-solid fa-angle-left text-gray-600"></i>
-          </a>
-        {% endif %}
+                <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">{{users.number}}</a>
 
-        <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">{{users.number}}</a>
+                {% if users.has_next %}
+                    <a href="?page={{users.next_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angle-right text-gray-600"></i>
+                    </a>
+                    <a href="?page={{users.paginator.num_pages}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                        <i class="fa-solid fa-angles-right text-gray-600"></i>
+                    </a>
+                {% endif %}
 
-        {% if users.has_next %}
-          <a href="?page={{users.next_page_number}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-            <i class="fa-solid fa-angle-right text-gray-600"></i>
-          </a>
-          <a href="?page={{users.paginator.num_pages}}" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-            <i class="fa-solid fa-angles-right text-gray-600"></i>
-          </a>
-        {% endif %}
-      </div>
-    </div>
+             </div>
+            </div>
   </div>
-</div>
-
-<!-- User details modal for smaller screens -->
-<div id="user-details-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
-  <div class="bg-white rounded-lg shadow-lg max-w-md mx-4 p-4 w-full">
-    <div class="flex justify-between items-center mb-4">
-      <h3 class="text-lg font-medium" id="modal-user-name"></h3>
-      <button id="close-modal" class="text-gray-500 hover:text-gray-800">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div id="modal-user-details" class="space-y-2">
-      <!-- User details will be populated here -->
-    </div>
-    <div class="mt-4 flex justify-end gap-2">
-      <a id="modal-edit-link" href="#" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500">
-        <i class="fas fa-edit mr-1"></i> Edit
-      </a>
-      <a id="modal-delete-link" href="#" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-500">
-        <i class="fas fa-trash-alt mr-1"></i> Delete
-      </a>
-    </div>
-  </div>
-</div>
 
 <script>
 let debounceTimer;
 let currentSearchQuery = '';
 let currentPage = 1;
 
+
 function searchUsers(query) {
-  clearTimeout(debounceTimer);
-  
-  currentSearchQuery = query;
-  
-  if (query.length > 0) {
-    debounceTimer = setTimeout(function() {
-      loadUserList(1, query);
-    }, 300); // 300ms delay for debounce
-  }
+    clearTimeout(debounceTimer);
+    
+    currentSearchQuery = query;
+    
+    
+    if (query.length > 0) {
+        debounceTimer = setTimeout(function() {
+            loadUserList(1, query);
+        }, 300); // 300ms delay for debounce
+    }
 }
+
 
 function loadUserList(page, searchQuery) {
-  currentPage = page;
-  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-  
-  fetch('{% url "live-search" %}', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify({
-      'query': searchQuery,
-      'page': page
+    currentPage = page;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    
+    fetch('{% url "live-search" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            'query': searchQuery,
+            'page': page
+        })
     })
-  })
-  .then(response => response.json())
-  .then(data => {
-    updateTableWithUsers(data);
-    updatePaginationInfo(data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+    .then(response => response.json())
+    .then(data => {
+        updateTableWithUsers(data);
+        updatePaginationInfo(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
+
 function updateTableWithUsers(data) {
-  const tableBody = document.getElementById('userTableBody');
-  tableBody.innerHTML = '';
-  
-  if (data.users && data.users.length > 0) {
-    data.users.forEach(user => {
-      // Main row
-      const mainRow = `
-        <tr class="bg-white border-b border-gray-200 hover:bg-gray-50">
-          <th scope="row" class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 font-medium text-gray-700 whitespace-nowrap">
-            ${user.full_name}
-          </th>
-          <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4">
-            ${user.gender}
-          </td>
-          <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden sm:table-cell">
-            ${user.birth_date}
-          </td>
-          <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden md:table-cell">
-            ${user.address}
-          </td>
-          <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden md:table-cell">
-            ${user.contact_number}
-          </td>
-          <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden lg:table-cell">
-            ${user.email}
-          </td>
-          <td class="px-3 py-3 sm:px-4 md:px-6 sm:py-4 hidden lg:table-cell">
-            ${user.username}
-          </td>
-          <td class="px-2 py-2 sm:px-3 md:px-6 sm:py-4 text-xs sm:text-sm md:text-[15px] flex items-center justify-end gap-2">
-            <a href="/users/edit/${user.user_id}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline hover:text-blue-900"> 
-              <i class="fas fa-edit mr-1"></i><span class="hidden sm:inline">Edit</span>
-            </a>
-            <a href="/users/delete/${user.user_id}" class="font-medium text-red-600 dark:text-red-500 hover:underline hover:text-red-800">
-              <i class="fas fa-trash-alt mr-1"></i><span class="hidden sm:inline">Delete</span>
-            </a>
-            <button class="sm:hidden text-gray-600 hover:text-blue-600 info-button" data-id="${user.user_id}">
-              <i class="fas fa-info-circle"></i>
-            </button>
-          </td>
-        </tr>
-      `;
-      
-      // Mobile info row
-      const infoRow = `
-        <tr id="info-row-${user.user_id}" class="bg-gray-50 border-b border-gray-200 hidden sm:hidden info-row">
-          <td colspan="4" class="px-3 py-3">
-            <div class="text-sm">
-              <p><span class="font-medium">Birth Date:</span> ${user.birth_date}</p>
-              <p><span class="font-medium">Address:</span> ${user.address}</p>
-              <p><span class="font-medium">Contact:</span> ${user.contact_number}</p>
-              <p><span class="font-medium">Email:</span> ${user.email}</p>
-              <p><span class="font-medium">Username:</span> ${user.username}</p>
-            </div>
-          </td>
-        </tr>
-      `;
-      
-      tableBody.innerHTML += mainRow + infoRow;
-    });
+    const tableBody = document.getElementById('userTableBody');
+    tableBody.innerHTML = '';
     
     if (data.users && data.users.length > 0) {
         data.users.forEach(user => {
@@ -435,113 +238,66 @@ function updateTableWithUsers(data) {
             </tr>
         `;
     }
-
-    // Add event listeners to info buttons
-    setTimeout(() => {
-      initInfoButtons();
-    }, 100);
-    
-  } else {
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="8" class="px-6 py-4 text-center text-red-500">
-          ${currentSearchQuery ? `"${currentSearchQuery}" not found` : 'No users found'}
-        </td>
-      </tr>
-    `;
-  }
-
 }
+
 
 function updatePaginationInfo(data) {
-  document.getElementById('startIndex').textContent = data.start_index || 0;
-  document.getElementById('endIndex').textContent = data.end_index || 0;
-  document.getElementById('totalCount').textContent = data.total_count || 0;
-  
-  const paginationLinks = document.getElementById('paginationLinks');
-  paginationLinks.innerHTML = '';
-  
-  if (data.has_previous) {
+
+    document.getElementById('startIndex').textContent = data.start_index || 0;
+    document.getElementById('endIndex').textContent = data.end_index || 0;
+    document.getElementById('totalCount').textContent = data.total_count || 0;
+    
+
+    const paginationLinks = document.getElementById('paginationLinks');
+    paginationLinks.innerHTML = '';
+    
+    if (data.has_previous) {
+        paginationLinks.innerHTML += `
+            <a href="#" onclick="loadUserList(1, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angles-left text-gray-600"></i>
+            </a>
+            <a href="#" onclick="loadUserList(${data.previous_page}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angle-left text-gray-600"></i>
+            </a>
+        `;
+    }
+    
     paginationLinks.innerHTML += `
-      <a href="#" onclick="loadUserList(1, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-        <i class="fa-solid fa-angles-left text-gray-600"></i>
-      </a>
-      <a href="#" onclick="loadUserList(${data.previous_page}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-        <i class="fa-solid fa-angle-left text-gray-600"></i>
-      </a>
+        <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">${data.current_page}</a>
     `;
-  }
-  
-  paginationLinks.innerHTML += `
-    <a href="#" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">${data.current_page}</a>
-  `;
-  
-  if (data.has_next) {
-    paginationLinks.innerHTML += `
-      <a href="#" onclick="loadUserList(${data.next_page}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-        <i class="fa-solid fa-angle-right text-gray-600"></i>
-      </a>
-      <a href="#" onclick="loadUserList(${data.num_pages}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
-        <i class="fa-solid fa-angles-right text-gray-600"></i>
-      </a>
-    `;
-  }
+    
+    if (data.has_next) {
+        paginationLinks.innerHTML += `
+            <a href="#" onclick="loadUserList(${data.next_page}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angle-right text-gray-600"></i>
+            </a>
+            <a href="#" onclick="loadUserList(${data.num_pages}, '${currentSearchQuery}'); return false;" class="pagination border border-gray-300 px-3 py-[6px] hover:bg-sky-100 hover:text-sky-600 hover:border-blue-400">
+                <i class="fa-solid fa-angles-right text-gray-600"></i>
+            </a>
+        `;
+    }
 }
 
-function initInfoButtons() {
-  const infoButtons = document.querySelectorAll('.info-button');
-  const modal = document.getElementById('user-details-modal');
-  const closeModal = document.getElementById('close-modal');
-  
-  infoButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      const userId = this.getAttribute('data-id');
-      const infoRow = document.getElementById(`info-row-${userId}`);
-      
-      if (infoRow) {
-        infoRow.classList.toggle('hidden');
-      }
-    });
-  });
-  
-  // Close modal when clicking the close button
-  if (closeModal) {
-    closeModal.addEventListener('click', function() {
-      modal.classList.add('hidden');
-    });
-  }
-  
-  // Close modal when clicking outside
-  if (modal) {
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) {
-        modal.classList.add('hidden');
-      }
-    });
-  }
-}
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Search button click
-  document.getElementById('searchButton').addEventListener('click', function() {
-    const query = document.getElementById('searchInput').value;
-    searchUsers(query);
-  });
-  
-  // Add event listeners to pagination links
-  document.querySelectorAll('#paginationLinks a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      if (!this.href.includes('return false')) {
-        e.preventDefault();
-        const url = new URL(this.href);
-        const page = url.searchParams.get('page') || 1;
-        loadUserList(page, currentSearchQuery);
-      }
+    // Search button click
+    document.getElementById('searchButton').addEventListener('click', function() {
+        const query = document.getElementById('searchInput').value;
+        searchUsers(query);
     });
-  });
-  
-  // Initialize info buttons
-  initInfoButtons();
+    
+
+    document.querySelectorAll('#paginationLinks a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            if (!this.href.includes('return false')) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const page = url.searchParams.get('page') || 1;
+                loadUserList(page, currentSearchQuery);
+            }
+        });
+    });
 });
 </script>
+ 
 {% endblock 'content' %}

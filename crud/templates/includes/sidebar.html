@@ -1,13 +1,10 @@
-
+{% load static %}
 
 <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-[20px] transition-transform -translate-x-full bg-blue-800 border-r border-gray-200 lg:translate-x-0" aria-label="Sidebar">
    <div class="flex justify-between items-center w-full border-b-1 border-blue-500 py-5 mb-5 px-4">
-
-<aside id="logo-sidebar" class=" fixed top-0 left-0 z-40 w-74 h-screen pt-[20px]  bg-blue-800 border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
-   <div class='w-full border-b-1 border-blue-500 py-5 mb-5'>
-      <a href="https://flowbite.com" class="flex ms-2 md:me-24">
-          <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 me-3" alt="FlowBite Logo" />
-          <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">CRUD</span>
+      <a href="https://github.com/Oriiswan/CRUD-application/tree/main" class="flex ms-2 md:me-24">
+          <img src= {% static "favicon.ico" %} class="h-8 me-3" alt="FlowBite Logo" />
+          <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">GROUP 15</span>
         </a>
       <button id="sidebarClose" class="lg:hidden text-white text-2xl focus:outline-none" aria-label="Close sidebar">
         <i class="fas fa-times"></i>
@@ -17,44 +14,75 @@
    <div class="bg-blue-800 text-white w-full flex-shrink-0">
       <ul class="space-y-2 font-medium">
         
-
-                  <li class='text-blue-300 font-medium ml-[10px]'>
+         <li class='text-blue-300 font-medium ml-[10px]'>
          User Management
          </li>
          <li class='my-[16px] '>
-            <a href="/users/list" class="flex items-center p-[12px] pl-[15px] text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group">
-              
-               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-users mr-2 opacity-70 "></i>  User List</span>
-            
+            <a href="/users/list" class="flex items-center p-[12px] pl-[15px] text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group {% if request.path == '/users/list' %}bg-blue-500{% else %}opacity-70{% endif %}">
+               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-users mr-2"></i> User List</span>
             </a>
          </li>
-      <li class='my-[16px] '>
-            <a href="/users/add" class="flex items-center p-[12px] pl-[15px]  text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group">
-
-               
-               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-user-plus mr-2 opacity-70 "></i>  Add User</span>
-               
-            </a>
-         </li>
-        <li class='text-blue-300 font-medium ml-[10px]'>
-         Gender Management
-         </li>
-       <li class='my-[16px] relative'>
-            <a href="/genders/list" class="flex items-center p-[12px] pl-[15px]  text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group">
-               
-               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-tachometer-alt mr-2 opacity-70 "></i> Gender List</span>
-            </a>
-            
-            
-         </li>
-      <li class='my-[16px] '>
-            <a href="/genders/add" class="flex items-center p-[12px] pl-[15px]  text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group">
-               
-               <span class="flex-1 ms-3 whitespace-nowrap"> <i class="fas fa-plus-circle mr-2 opacity-70 "></i> Add Gender</span>
+         <li class='my-[16px] '>
+            <a href="/users/add" class="flex items-center p-[12px] pl-[15px] text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group {% if request.path == '/users/add' %}bg-blue-500{% else %}opacity-70{% endif %}">
+               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-user-plus mr-2"></i> Add User</span>
             </a>
          </li>
          
+        <!-- Gender Management -->
+        <li class='text-blue-300 font-medium ml-[10px]'>
+         Gender Management
+         </li>
+         <li class='my-[16px] relative'>
+            <a href="/genders/list" class="flex items-center p-[12px] pl-[15px] text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group {% if request.path == '/genders/list' %}bg-blue-500{% else %}opacity-70{% endif %}">
+               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-tachometer-alt mr-2"></i> Gender List</span>
+            </a>
+         </li>
+         <li class='my-[16px] '>
+            <a href="/genders/add" class="flex items-center p-[12px] pl-[15px] text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group {% if request.path == '/genders/add' %}bg-blue-500{% else %}opacity-70{% endif %}">
+               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-plus-circle mr-2"></i> Add Gender</span>
+            </a>
+         </li>
+         
+         <!-- Account Section -->
+         <li class='text-blue-300 font-medium ml-[10px]'>
+            Account
+         </li>
+         <li class='my-[16px] '>
+            <a href="{% url 'logout' %}" class="flex items-center p-[12px] pl-[15px] text-gray-900  dark:text-white hover:bg-gray-100 dark:hover:bg-blue-500 group {% if request.path == '/logout' %}bg-blue-500{% else %}opacity-70{% endif %}">
+               <span class="flex-1 ms-3 whitespace-nowrap"><i class="fas fa-sign-out-alt mr-2"></i> Logout</span>
+            </a>
+         </li>
       </ul>
    </div>
 </aside>
 
+
+
+<!-- Add this script section at the bottom of your template -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all anchor tags in the sidebar except the logo link
+    const links = document.querySelectorAll('#logo-sidebar ul a:not([href^="https://github.com"])');
+    
+    links.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Don't intercept clicks if it's the logout link
+            if (this.getAttribute('href') === "{% url 'logout' %}") {
+                return true;
+            }
+            
+            e.preventDefault();
+            const targetUrl = this.getAttribute('href');
+            
+            // Add loading indicator or transition effect
+            document.body.style.opacity = '0.8';
+            document.body.style.transition = 'opacity 0.3s';
+            
+            // Delay the navigation
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 500); // 1000ms = 1 second delayyt 
+        });
+    });
+});
+</script>

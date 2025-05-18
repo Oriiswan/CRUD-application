@@ -361,12 +361,7 @@ def profile_page(request):
             return render(request, 'user/profile.html', data)
         
         return render(request, 'user/profile.html', data)
-    users = Users.objects.get(username = request.user)
-    data = {
-        'users': users
-	}
-    return render(request, 'user/profile.html', data)
-    
+        
     except Users.DoesNotExist:
         messages.error(request, 'User not found')
         return redirect('login')

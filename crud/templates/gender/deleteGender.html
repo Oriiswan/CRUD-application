@@ -1,7 +1,7 @@
 {% extends "layout/base.html" %}
 
 {% block 'title' %}Delete Gender{% endblock 'title' %}
-{% block 'nav' %}Delete Gender{% endblock 'nav' %}
+{% block 'nav' %}{{request.user.username}}{% endblock 'nav' %}
 {% block 'content' %}
 
 {% include "includes/sidebar.html" %}
