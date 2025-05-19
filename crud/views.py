@@ -234,7 +234,7 @@ def edit_user(request, userId):
             userObj.save()
 
 
-            messages.success(request, 'Gender updated successfully!')
+            messages.success(request, 'User updated successfully!')
             # gabalik sa iban nga link
             return redirect('/users/list')
 
