@@ -5,7 +5,7 @@
 {% block 'content' %}
 {% include "includes/sidebar.html" %}
 
-<div class="w-full inset-0 bg-gray-100 p-2 md:p-4 overflow-y-auto ">
+<div class="w-full inset-0 bg-gray-100 p-2 mt-6 md:p-4 overflow-y-auto ">
   <div class="">
     <!-- Header -->
     <div class="bg-blue-600 py-3 md:py-4 px-4 md:px-6 rounded-t-lg">
@@ -38,7 +38,7 @@
               <label for="gender" class="block text-sm font-medium text-gray-700">Gender*</label>
               <select id="gender" name="gender" required
                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Select Gender</option>
+                <option value="" >Select Gender</option>
                 {% for gender in genders  %}
                   <option value="{{ gender.gender_id }}" {% if form_data.gender|default:'' == gender.gender_id %}selected{% endif %}>
                     {{ gender.gender }}

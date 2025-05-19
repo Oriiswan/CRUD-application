@@ -65,7 +65,7 @@
 
 
 <div class="flex h-screen w-full items-center justify-center bg-gray-100 px-2">
-  <form method="POST" class="mt-[-100px] w-full max-w-lg rounded-md shadow-lg bg-white">
+  <form method="POST" class="mt-6 w-full max-w-lg rounded-md shadow-lg bg-white">
     {% csrf_token %}
     <input type="hidden" name="next" value="{{ next }}">
     {% if error %}<p class="error">{{ error }}</p>{% endif %}

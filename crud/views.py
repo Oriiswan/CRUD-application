@@ -279,34 +279,6 @@ def delete_user(request, userId):
     except Exception as e:
         return HttpResponse(f'Error occured during delete gender: {e}')
 
-##
-# def login(request):
-#     global currentPassword
-#     global currentUsername
-#     try:
-#         if request.method == 'POST':
-#             users = Users.objects.all()
-#             username = request.POST.get('username')
-#             password = request.POST.get('password')
-#             for i in users:
-#                 if username == i.username and check_password(password, i.password):
-#                   currentUsername = username
-#                   currentPassword = password
-#                   return redirect('user_list')
-                
-#             return render(request, 'user/login.html')    
-#         else:
-#             messages.error(request, 'Incorrect data!')
-#             return render(request, 'user/login.html')
-                    
-#     except Exception as e:
-#         return HttpResponse(f'Error occured during login: {e}')
-# ##2
-# def logout(request):
-#     from django.contrib.auth import logout as auth_logout
-#     auth_logout(request)
-#     return redirect('login')
-
 
 def search_users(request):
     if request.method == "POST":
@@ -369,31 +341,6 @@ def profile_page(request):
            
         
 
-    #     return render(request, 'user/searchUser.html', data)
-    # else:
-    #     searched = request.GET.get('searched', '').strip()
-
-    #     users_result = Users.objects.filter(full_name__icontains=searched)
-
-    #     p = Paginator(users_result, 10)
-    #     page = request.GET.get('page')
-    #     users = p.get_page(page)
-    #     user_count = len(users_result)
-
-
-
-
-    #     data = {
-    #     'users_result': users_result,
-    #     'users': users,
-    #     'password': currentPassword,
-    #     'username': currentUsername,
-    #     'user_count': user_count,
-    #     'searched': searched
-        
-    #     }
-        
-    #     return render(request, 'user/searchUser.html', data)
 
 
 def live_search(request):
