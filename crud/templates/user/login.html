@@ -1,4 +1,4 @@
-{%load static%}
+{%load static %}
 
 {% if messages %}
 <div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-2 w-80 bg-white">
@@ -20,6 +20,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static '/site.webmanifest' %}">
     <head>
   <!-- Add this if using CDN -->
  <link rel="stylesheet" href="{% static 'css/output.css ' %}">
